@@ -1,0 +1,24 @@
+{
+    "name": "bob4ever/php-stub-generator",
+    "description": "A tool to generate stub-files for your php classes.",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "bob4ever"
+        }
+    ],
+
+    "require": {
+        "php": "^7.1",
+        "goaop/parser-reflection": "^1.2",
+
+        "roave/security-advisories": "dev-master"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "setasign\\PhpStubGenerator\\": "src/"
+        }
+    }
+}
