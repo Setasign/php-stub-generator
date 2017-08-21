@@ -44,24 +44,37 @@ class PhpStubGenerator
     public function generate(): string
     {
         $n = self::$eol;
+        $t = self::$tab;
         $result = '<?php' . $n
                 . '// @codingStandardsIgnoreFile' . $n . $n;
 
         $parser = $this->getParser();
-        foreach ($parser->parse() as $namespace => $classes) {
+        $parser->parse();
+        foreach ($parser->getClasses() as $namespace => $classes) {
             /**
              * @var ReflectionClass[] $classes
              */
 
-            $isGlobalNamespace = $namespace === '';
-            $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
-                     . '{' . $n;
-
             foreach ($classes as $class) {
+                $isGlobalNamespace = $namespace === '';
+                $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
+                    . '{' . $n;
+                $aliases = $parser->getAliases($class->getName());
+                foreach ($aliases as $fullName => $alias) {
+                    $result .= $t . 'use ' . $fullName;
+                    if ($alias !== substr($fullName, -strlen($alias))) {
+                        $result .= ' as ' . $alias;
+                    }
+
+                    $result .= ';' . $n;
+                }
+                $result .= $n;
+
                 $result .= (new ClassFormatter($parser, $class))->format();
+
+                $result .= '}' . $n;
             }
 
-            $result .= '}' . $n;
         }
 
         return $result;

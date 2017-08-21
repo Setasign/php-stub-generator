@@ -51,6 +51,7 @@ class AllFiles implements ReaderInterface
         $result = [];
 
         foreach (glob($directory . '/*', GLOB_ONLYDIR) as $subDirectory) {
+            $subDirectory = realpath($subDirectory);
             if (in_array($subDirectory, $this->excludes, true)) {
                 continue;
             }
@@ -61,6 +62,7 @@ class AllFiles implements ReaderInterface
         }
 
         foreach (glob($directory . '/*.php') as $file) {
+            $file = realpath($file);
             if (in_array($file, $this->excludes, true)) {
                 continue;
             }

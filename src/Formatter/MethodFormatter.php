@@ -65,12 +65,16 @@ class MethodFormatter
             $type = (string) $parameter->getType();
 
             if ($type !== '') {
-                $param .= $type;
-
                 if ($parameter->allowsNull() &&
                     (!$parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
                 ) {
                     $param .= '?';
+                }
+
+                if (in_array($type, ['int', 'float', 'bool', 'string', 'self', 'callable', 'array'], true)) {
+                    $param .= $type;
+                } else {
+                    $param .= '\\' . ltrim($type, '\\');
                 }
 
                 $param .= ' ';
@@ -101,8 +105,14 @@ class MethodFormatter
             $returnType = $this->method->getReturnType();
             if ($returnType instanceof ReflectionType) {
                 $allowsNull = $returnType->allowsNull();
+                $returnType = (string) $returnType;
 
-                $result .= ':' . ($allowsNull ? '?' : '') . $returnType;
+                $result .= ': ' . ($allowsNull ? '?' : '');
+                if (in_array($returnType, ['int', 'float', 'bool', 'string', 'self', 'callable', 'array'], true)) {
+                    $result .= $returnType;
+                } else {
+                    $result .= '\\' . ltrim($returnType, '\\');
+                }
             }
         }
 

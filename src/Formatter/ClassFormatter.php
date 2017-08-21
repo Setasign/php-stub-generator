@@ -38,8 +38,11 @@ class ClassFormatter
         $t = PhpStubGenerator::$tab;
 
         $result = '';
-        $result .= FormatHelper::indentDocBlock($this->class->getDocComment(), 1, $t) . $n
-            . $t;
+        $docComment = $this->class->getDocComment();
+        if ($docComment !== false) {
+            $result .= FormatHelper::indentDocBlock($docComment, 1, $t) . $n;
+        }
+        $result .= $t;
 
         if ($this->class->isInterface()) {
             $result .= 'interface ';
@@ -61,13 +64,17 @@ class ClassFormatter
         } catch (\Throwable $e) {
         }
         if ($parentClass instanceof ReflectionClass) {
-            $result .= ' extends \\' . $parentClass->getName();
+            $result .= ' extends \\' . ltrim($parentClass->getName(), '\\');
         }
 
         $interfaces = $this->class->getInterfaces();
         // remove interfaces from parent class if there is a parent class
         if ($parentClass instanceof ReflectionClass) {
             $interfaces = array_filter($interfaces, function (ReflectionClass $interface) use ($parentClass) {
+                if (!$parentClass->isUserDefined() && $interface->isUserDefined()) {
+                    return false;
+                }
+
                 return !$parentClass->implementsInterface($interface->getName());
             });
         }
@@ -97,7 +104,7 @@ class ClassFormatter
             }
 
             $interfaceNames = array_map(function ($interfaceName) {
-                return '\\' . $interfaceName;
+                return '\\' . ltrim($interfaceName, '\\');
             }, $interfaceNames);
 
             $result .= implode(', ', $interfaceNames);

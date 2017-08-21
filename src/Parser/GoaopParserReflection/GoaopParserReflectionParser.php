@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Parser\GoaopParserReflection;
 
+use Go\ParserReflection\ReflectionFileNamespace;
 use ReflectionClass;
 use Go\ParserReflection\ReflectionEngine;
 use Go\ParserReflection\ReflectionFile;
@@ -19,6 +20,16 @@ class GoaopParserReflectionParser implements ParserInterface
     private $sources;
 
     /**
+     * @var null|array
+     */
+    private $namespaces;
+
+    /**
+     * @var null|array
+     */
+    private $aliases;
+
+    /**
      * GoaopParserReflectionParser constructor.
      *
      * @param ReaderInterface[] $sources
@@ -28,34 +39,65 @@ class GoaopParserReflectionParser implements ParserInterface
         $this->sources = $sources;
     }
 
-    public function parse(): array
+    /**
+     * @inheritdoc
+     */
+    public function parse(): void
     {
-        $namespaces = $this->resolveNamespaces();
+        $this->resolveNamespaces();
 
         $paths = array_map(function (array $classes) {
             return array_map(function (ReflectionClass $reflectionClass) {
                 return $reflectionClass->getFileName();
             }, $classes);
-        }, $namespaces);
+        }, $this->namespaces);
 
         $classMap = array_merge(...array_values($paths));
         $locator = new ClassListLocator($classMap);
         ReflectionEngine::init($locator);
-
-        return $namespaces;
     }
 
     /**
-     * @return ReflectionClass[][]
+     * @inheritdoc
      */
-    protected function resolveNamespaces(): array
+    public function getClasses(): array
+    {
+        if ($this->namespaces === null) {
+            throw new \BadMethodCallException('GoaopParserReflectionParser::parse wasn\'t called yet!');
+        }
+
+        return $this->namespaces;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAliases(string $className): array
+    {
+        if ($this->aliases === null) {
+            throw new \BadMethodCallException('GoaopParserReflectionParser::parse wasn\'t called yet!');
+        }
+
+        if (!array_key_exists($className, $this->aliases)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Unknown class "%s"!',
+                $className
+            ));
+        }
+
+        return $this->aliases[$className];
+    }
+
+    protected function resolveNamespaces(): void
     {
         $files = array_map(function (ReaderInterface $source) {
-            return array_map(function (string $file) {
-                return new ReflectionFile($file);
-            }, $source->getFiles());
-        }, $this->sources);
-        $files = array_merge(...array_values($files));
+            return $source->getFiles();
+        }, array_values($this->sources));
+        $files = array_merge(...$files);
+
+        $files = array_map(function (string $file) {
+            return new ReflectionFile($file);
+        }, $files);
 
         $fileNamespaces = array_map(function (ReflectionFile $file) {
             return $file->getFileNamespaces();
@@ -64,18 +106,24 @@ class GoaopParserReflectionParser implements ParserInterface
         /**
          * @var array $namespaces
          */
-        $namespaces = array_reduce($fileNamespaces, function (array $carry, array $fileNamespaces) {
+        $namespaces = [];
+        $aliases = [];
+        array_walk($fileNamespaces, function (array $fileNamespaces) use (&$namespaces, &$aliases) {
             foreach ($fileNamespaces as $fileNamespace) {
-                $carry[$fileNamespace->getName()][] = $fileNamespace->getClasses();
+                /**
+                 * @var ReflectionFileNamespace $fileNamespace
+                 */
+                $namespace = $fileNamespace->getName();
+                $namespaceAliases = $fileNamespace->getNamespaceAliases();
+                foreach ($fileNamespace->getClasses() as $class) {
+                    $className = $class->getName();
+                    $namespaces[$namespace][$className] = $class;
+                    $aliases[$className] = $namespaceAliases;
+                }
             }
-            return $carry;
-        }, []);
-
-        foreach ($namespaces as $name => $classes) {
-            $namespaces[$name] = array_merge(...$classes);
-        }
-
-        return $namespaces;
+        });
+        $this->namespaces = $namespaces;
+        $this->aliases = $aliases;
     }
 
     public function getConstantReflection(\ReflectionClass $reflectionClass, string $constantName): ?ReflectionConst
