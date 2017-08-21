@@ -15,7 +15,7 @@ class FormatHelper
     {
         $tab = str_repeat($tabChar, $tabCount);
         
-        return $tab . preg_replace("/\n( |\t)*/", "\n " . $tab, $block);
+        return $tab . preg_replace("/\r?\n( |\t)*/", "\n" . $tab .  ' ', $block);
     }
 
     public static function formatValue($value): string

@@ -12,6 +12,7 @@
     "require": {
         "php": "^7.1",
         "ext-mbstring": "*",
+        "ext-pcre": "*",
 
         "goaop/parser-reflection": "^1.2",
 
@@ -25,6 +26,12 @@
     "autoload": {
         "psr-4": {
             "setasign\\PhpStubGenerator\\": "src/"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "setasign\\PhpStubGenerator\\Tests": "tests/"
         }
     }
 }

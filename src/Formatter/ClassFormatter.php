@@ -110,9 +110,12 @@ class ClassFormatter
             $result .= implode(', ', $interfaceNames);
         }
 
-        $result .= $n . $t . '{' . $n;
+        $result .= $n
+            . $t . '{' . $n;
+
         if (!$ignoreSubElements) {
-            $result .= (new TraitUseBlockFormatter($this->class))->format();
+            // todo implement traitUseBlockFormatter
+//            $result .= (new TraitUseBlockFormatter($this->class))->format();
 
             foreach ($this->class->getConstants() as $constantName => $constantValue) {
                 $result .= (new ConstantFormatter($this->parser, $this->class, $constantName))->format();
