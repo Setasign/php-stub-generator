@@ -119,11 +119,12 @@ class ClassFormatter
             }
 
             foreach ($this->class->getProperties() as $property) {
-                $result .= (new PropertyFormatter($this->class, $property))->format();
+                $result .= (new PropertyFormatter($this->class->getName(), $property))->format();
             }
 
             foreach ($this->class->getMethods() as $method) {
-                $result .= (new MethodFormatter($this->class, $method))->format();
+                $result .= (new MethodFormatter($this->class->getName(), $this->class->isInterface(), $method))
+                    ->format();
             }
         }
         $result .= '';

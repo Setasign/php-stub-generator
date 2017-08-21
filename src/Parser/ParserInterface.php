@@ -5,26 +5,36 @@ namespace setasign\PhpStubGenerator\Parser;
 
 interface ParserInterface
 {
+    const TYPE_CLASS = 'class';
+    const TYPE_FUNCTION = 'function';
+
     /**
      * @return void
      */
     public function parse(): void;
 
     /**
-     * @return array Returns an array like this: ['NamespaceName' => ReflectionClass[]]
+     * @return array Returns an array like this: ['NamespaceName' => \ReflectionClass[]]
      * @throws \BadMethodCallException If parse wasn't called yet.
      */
     public function getClasses(): array;
 
     /**
-     * Returns an array with all use aliases for class $className.
+     * @return array Returns an array like this: ['NamespaceName' => \ReflectionFunction[]]
+     * @throws \BadMethodCallException If parse wasn't called yet.
+     */
+    public function getFunctions(): array;
+
+    /**
+     * Returns an array with all use aliases for $classOrFunctionName.
      *
-     * @param string $className
+     * @param string $classOrFunctionName
+     * @param string $type See self::TYPE_*
      * @return array
      * @throws \BadMethodCallException If parse wasn't called yet.
-     * @throws \InvalidArgumentException If the class can't be found.
+     * @throws \InvalidArgumentException If the class or function is unknown.
      */
-    public function getAliases(string $className): array;
+    public function getAliases(string $classOrFunctionName, string $type): array;
 
     /**
      * @param \ReflectionClass $reflectionClass

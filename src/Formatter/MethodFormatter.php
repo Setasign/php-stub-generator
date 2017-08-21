@@ -9,22 +9,31 @@ use ReflectionType;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
-class MethodFormatter
+/**
+ * Class MethodFormatter
+ *
+ * @package setasign\PhpStubGenerator\Formatter
+ * @property ReflectionMethod $function
+ */
+class MethodFormatter extends FunctionFormatter
 {
-    /**
-     * @var ReflectionClass
-     */
-    private $class;
+    const DEFAULT_TYPES = ['int', 'float', 'bool', 'string', 'self', 'callable', 'array', 'object'];
 
     /**
-     * @var ReflectionMethod
+     * @var string
      */
-    private $method;
+    private $className;
 
-    public function __construct(ReflectionClass $class, ReflectionMethod $method)
+    /**
+     * @var bool
+     */
+    private $classIsInterface;
+
+    public function __construct(string $className, bool $classIsInterface, ReflectionMethod $method)
     {
-        $this->class = $class;
-        $this->method = $method;
+        $this->className = $className;
+        $this->classIsInterface = $classIsInterface;
+        parent::__construct($method);
     }
 
     public function format(): string
@@ -32,91 +41,36 @@ class MethodFormatter
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
 
-        if ($this->method->getDeclaringClass()->getName() !== $this->class->getName()) {
+        if ($this->function->getDeclaringClass()->getName() !== $this->className) {
             return '';
         }
 
         $result = '';
-        $result .= FormatHelper::indentDocBlock((string) $this->method->getDocComment(), 2, $t) . $n
+        $result .= FormatHelper::indentDocBlock((string) $this->function->getDocComment(), 2, $t) . $n
             . $t . $t;
 
-        if ($this->method->isAbstract() && !$this->class->isInterface()) {
+        if (!$this->classIsInterface && $this->function->isAbstract()) {
             $result .= 'abstract ';
-        } elseif ($this->method->isFinal()) {
+        } elseif ($this->function->isFinal()) {
             $result .= 'final ';
         }
 
-        if ($this->method->isPublic()) {
+        if ($this->function->isPublic()) {
             $result .= 'public ';
-        } elseif ($this->method->isProtected()) {
+        } elseif ($this->function->isProtected()) {
             $result .= 'protected ';
         } else {
             $result .= 'private ';
         }
 
-        if ($this->method->isStatic()) {
+        if ($this->function->isStatic()) {
             $result .= 'static ';
         }
 
-        $result .= 'function ' . $this->method->getName() . '(';
-        $params = [];
-        foreach ($this->method->getParameters() as $parameter) {
-            $param = '';
-            $type = (string) $parameter->getType();
+        $result .= 'function ' . $this->function->getName() . '(' . $this->formatParams() . ')'
+            . $this->formatReturnType();
 
-            if ($type !== '') {
-                if ($parameter->allowsNull() &&
-                    (!$parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
-                ) {
-                    $param .= '?';
-                }
-
-                if (in_array($type, ['int', 'float', 'bool', 'string', 'self', 'callable', 'array'], true)) {
-                    $param .= $type;
-                } else {
-                    $param .= '\\' . ltrim($type, '\\');
-                }
-
-                $param .= ' ';
-            }
-
-            if ($parameter->isVariadic()) {
-                $param .= '...';
-            }
-
-            $param .= '$' . $parameter->getName();
-            if ($parameter->isDefaultValueAvailable()) {
-                if ($parameter->isDefaultValueConstant()) {
-                    $default = $parameter->getDefaultValueConstantName();
-                } else {
-                    $default = FormatHelper::formatValue($parameter->getDefaultValue());
-                }
-
-                $param .= ' = ' . $default;
-            }
-            $params[] = $param;
-
-            unset($default);
-        }
-        $result .= implode(', ', $params);
-        $result .= ')';
-
-        if ($this->method->hasReturnType()) {
-            $returnType = $this->method->getReturnType();
-            if ($returnType instanceof ReflectionType) {
-                $allowsNull = $returnType->allowsNull();
-                $returnType = (string) $returnType;
-
-                $result .= ': ' . ($allowsNull ? '?' : '');
-                if (in_array($returnType, ['int', 'float', 'bool', 'string', 'self', 'callable', 'array'], true)) {
-                    $result .= $returnType;
-                } else {
-                    $result .= '\\' . ltrim($returnType, '\\');
-                }
-            }
-        }
-
-        if (!$this->class->isInterface() && !$this->method->isAbstract()) {
+        if (!$this->classIsInterface && !$this->function->isAbstract()) {
             $result .= ' {}' . $n . $n;
         } else {
             $result .= ';' . $n . $n;

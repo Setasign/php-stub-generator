@@ -11,18 +11,18 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
 class PropertyFormatter
 {
     /**
-     * @var ReflectionClass
+     * @var string
      */
-    protected $class;
+    protected $className;
 
     /**
      * @var ReflectionProperty
      */
     protected $property;
 
-    public function __construct(ReflectionClass $class, ReflectionProperty $property)
+    public function __construct(string $className, ReflectionProperty $property)
     {
-        $this->class = $class;
+        $this->className = $className;
         $this->property = $property;
     }
 
@@ -32,7 +32,7 @@ class PropertyFormatter
         $t = PhpStubGenerator::$tab;
 
         if (!$this->property->isDefault()
-            || $this->property->getDeclaringClass()->getName() !== $this->class->getName()
+            || $this->property->getDeclaringClass()->getName() !== $this->className
         ) {
             return '';
         }

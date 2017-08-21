@@ -22,7 +22,12 @@ class GoaopParserReflectionParser implements ParserInterface
     /**
      * @var null|array
      */
-    private $namespaces;
+    private $classes;
+
+    /**
+     * @var null|array
+     */
+    private $functions;
 
     /**
      * @var null|array
@@ -50,7 +55,7 @@ class GoaopParserReflectionParser implements ParserInterface
             return array_map(function (ReflectionClass $reflectionClass) {
                 return $reflectionClass->getFileName();
             }, $classes);
-        }, $this->namespaces);
+        }, $this->classes);
 
         $classMap = array_merge(...array_values($paths));
         $locator = new ClassListLocator($classMap);
@@ -62,30 +67,42 @@ class GoaopParserReflectionParser implements ParserInterface
      */
     public function getClasses(): array
     {
-        if ($this->namespaces === null) {
+        if ($this->classes === null) {
             throw new \BadMethodCallException('GoaopParserReflectionParser::parse wasn\'t called yet!');
         }
 
-        return $this->namespaces;
+        return $this->classes;
     }
 
     /**
      * @inheritdoc
      */
-    public function getAliases(string $className): array
+    public function getFunctions(): array
+    {
+        if ($this->functions === null) {
+            throw new \BadMethodCallException('GoaopParserReflectionParser::parse wasn\'t called yet!');
+        }
+
+        return $this->functions;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAliases(string $classOrFunctionName, string $type): array
     {
         if ($this->aliases === null) {
             throw new \BadMethodCallException('GoaopParserReflectionParser::parse wasn\'t called yet!');
         }
 
-        if (!array_key_exists($className, $this->aliases)) {
+        if (!array_key_exists($classOrFunctionName, $this->aliases[$type])) {
             throw new \InvalidArgumentException(sprintf(
-                'Unknown class "%s"!',
-                $className
+                'Unknown class or function "%s"!',
+                $classOrFunctionName
             ));
         }
 
-        return $this->aliases[$className];
+        return $this->aliases[$type][$classOrFunctionName];
     }
 
     protected function resolveNamespaces(): void
@@ -104,11 +121,12 @@ class GoaopParserReflectionParser implements ParserInterface
         }, $files);
 
         /**
-         * @var array $namespaces
+         * @var array $classes
          */
-        $namespaces = [];
+        $classes = [];
+        $functions = [];
         $aliases = [];
-        array_walk($fileNamespaces, function (array $fileNamespaces) use (&$namespaces, &$aliases) {
+        array_walk($fileNamespaces, function (array $fileNamespaces) use (&$classes, &$functions, &$aliases) {
             foreach ($fileNamespaces as $fileNamespace) {
                 /**
                  * @var ReflectionFileNamespace $fileNamespace
@@ -117,15 +135,25 @@ class GoaopParserReflectionParser implements ParserInterface
                 $namespaceAliases = $fileNamespace->getNamespaceAliases();
                 foreach ($fileNamespace->getClasses() as $class) {
                     $className = $class->getName();
-                    $namespaces[$namespace][$className] = $class;
-                    $aliases[$className] = $namespaceAliases;
+                    $classes[$namespace][$className] = $class;
+                    $aliases[self::TYPE_CLASS][$className] = $namespaceAliases;
+                }
+
+                foreach ($fileNamespace->getFunctions() as $function) {
+                    $functionName = $function->getName();
+                    $functions[$namespace][$functionName] = $function;
+                    $aliases[self::TYPE_FUNCTION][$functionName] = $namespaceAliases;
                 }
             }
         });
-        $this->namespaces = $namespaces;
+        $this->classes = $classes;
+        $this->functions = $functions;
         $this->aliases = $aliases;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getConstantReflection(\ReflectionClass $reflectionClass, string $constantName): ?ReflectionConst
     {
         $reflectionConst = null;
