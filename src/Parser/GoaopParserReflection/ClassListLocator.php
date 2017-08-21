@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace setasign\PhpStubGenerator\Parser;
+namespace setasign\PhpStubGenerator\Parser\GoaopParserReflection;
 
 use Go\ParserReflection\LocatorInterface;
 

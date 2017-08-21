@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace setasign\PhpStubGenerator\Parser;
+namespace setasign\PhpStubGenerator\Parser\GoaopParserReflection;
 
+use setasign\PhpStubGenerator\Parser\ReflectionConst as ReflectionConstInterface;
 use Go\ParserReflection\ReflectionEngine;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassConst;
@@ -15,9 +16,9 @@ use PhpParser\Node\Stmt\Namespace_;
  * @package com\setasign\SetaSite\CustomModules\ApiDoc
  * @license MIT https://github.com/marcioAlmada/annotations
  * @copyright 2013-2014 Márcio Almada
- * @copyright 2016 Setasign
+ * @copyright 2016-2017 Setasign
  */
-class ReflectionConst implements \Reflector
+class ReflectionConst implements \Reflector, ReflectionConstInterface
 {
     protected $declaringClass;
     protected $classConstNode;
@@ -85,9 +86,9 @@ class ReflectionConst implements \Reflector
         return null;
     }
     /**
-     * @return string
+     * @return null|string
      */
-    public function getDocComment()
+    public function getDocComment(): ?string
     {
         if (false === $this->docCommentProcessed) {
             $this->docComment = null;

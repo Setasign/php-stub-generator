@@ -11,6 +11,8 @@
 
     "require": {
         "php": "^7.1",
+        "ext-mbstring": "*",
+
         "goaop/parser-reflection": "^1.2",
 
         "roave/security-advisories": "dev-master"
