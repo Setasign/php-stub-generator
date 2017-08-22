@@ -15,9 +15,7 @@
         "ext-mbstring": "*",
         "ext-pcre": "*",
 
-        "goaop/parser-reflection": "^1.2",
-
-        "roave/security-advisories": "dev-master"
+        "goaop/parser-reflection": "^1.2"
     },
 
     "require-dev": {

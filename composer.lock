@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfb24037cf945da21d6b415d65902111",
+    "content-hash": "098738f0b1ddda2f7f97234bb7326f4d",
     "packages": [
         {
             "name": "goaop/parser-reflection",
@@ -1706,7 +1706,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.1",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-pcre": "*"
     },
     "platform-dev": []
 }
