@@ -6,7 +6,6 @@ completion for your IDE when encrypting your library with e.g.
 [the ioncube encoder](http://www.ioncube.com/php_encoder.php).
 
 [![Build Status](https://travis-ci.org/Setasign/php-stub-generator.svg?branch=master)](https://travis-ci.org/Setasign/php-stub-generator)
-[![Total Downloads](https://poser.pugx.org/setasign/php-stub-generator/downloads.svg)](https://packagist.org/packages/setasign/php-stub-generator)
 [![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/packagist/l/setasign/php-stub-generator.svg)](https://packagist.org/packages/setasign/php-stub-generator)
 
