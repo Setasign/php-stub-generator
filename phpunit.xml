@@ -1,0 +1,26 @@
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="false">
+    <php>
+        <!--Path to the autoload file that should be used. Use a composer autoloader by default-->
+        <const name="AUTOLOAD_PATH" value="./vendor/autoload.php"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="Unit Tests">
+            <directory>./tests/unit</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./src/</directory>
+        </whitelist>
+    </filter>
+</phpunit>
