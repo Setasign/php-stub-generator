@@ -1,5 +1,5 @@
 {
-    "name": "bob4ever/php-stub-generator",
+    "name": "setasign/php-stub-generator",
     "description": "A tool to generate stub-files for your php classes.",
     "minimum-stability": "stable",
     "license": "MIT",
