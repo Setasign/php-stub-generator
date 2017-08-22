@@ -10,3 +10,4 @@ install: composer update --prefer-dist --no-interaction
 
 script:
   - vendor/bin/phpunit --colors
+  
