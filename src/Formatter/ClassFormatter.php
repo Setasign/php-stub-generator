@@ -71,6 +71,7 @@ class ClassFormatter
         // remove interfaces from parent class if there is a parent class
         if ($parentClass instanceof ReflectionClass) {
             $interfaces = array_filter($interfaces, function (ReflectionClass $interface) use ($parentClass) {
+                // if the $parentClass is a default php class it cannot use an user defined interface
                 if (!$parentClass->isUserDefined() && $interface->isUserDefined()) {
                     return false;
                 }
@@ -86,7 +87,11 @@ class ClassFormatter
                 /**
                  * @var ReflectionClass $compareInterface
                  */
-                if ($compareInterface->implementsInterface($interfaceName)) {
+                /** @noinspection NotOptimalIfConditionsInspection */
+                // if the $compareInterface is a default php interface it cannot use an user defined interface
+                if ((!$compareInterface->isUserDefined() && $interface->isUserDefined())
+                    || $compareInterface->implementsInterface($interfaceName)
+                ) {
                     return false;
                 }
             }
