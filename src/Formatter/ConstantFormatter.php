@@ -37,6 +37,9 @@ class ConstantFormatter
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
+        if (!$this->class->hasConstant($this->constantName)) {
+            return '';
+        }
 
         $parentClass = null;
         try {

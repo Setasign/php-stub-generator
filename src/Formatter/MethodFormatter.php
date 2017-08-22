@@ -17,8 +17,6 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
  */
 class MethodFormatter extends FunctionFormatter
 {
-    const DEFAULT_TYPES = ['int', 'float', 'bool', 'string', 'self', 'callable', 'array', 'object'];
-
     /**
      * @var string
      */
@@ -46,9 +44,12 @@ class MethodFormatter extends FunctionFormatter
         }
 
         $result = '';
-        $result .= FormatHelper::indentDocBlock((string) $this->function->getDocComment(), 2, $t) . $n
-            . $t . $t;
+        $doc = $this->function->getDocComment();
+        if (is_string($doc)) {
+            $result .= FormatHelper::indentDocBlock($doc, 2, $t) . $n;
+        }
 
+        $result .= $t . $t;
         if (!$this->classIsInterface && $this->function->isAbstract()) {
             $result .= 'abstract ';
         } elseif ($this->function->isFinal()) {
@@ -59,7 +60,7 @@ class MethodFormatter extends FunctionFormatter
             $result .= 'public ';
         } elseif ($this->function->isProtected()) {
             $result .= 'protected ';
-        } else {
+        } elseif ($this->function->isPrivate()) {
             $result .= 'private ';
         }
 

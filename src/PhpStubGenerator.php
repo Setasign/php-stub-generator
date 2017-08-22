@@ -74,7 +74,7 @@ class PhpStubGenerator
              * @var ReflectionFunction[] $functions
              */
             foreach ($functions as $function) {
-                $isGlobalNamespace = $namespace === '';
+                $isGlobalNamespace = ($namespace === '');
                 $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
                     . '{' . $n;
                 $result .= $this->formatAliases(

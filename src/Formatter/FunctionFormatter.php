@@ -27,12 +27,16 @@ class FunctionFormatter
         $params = [];
         foreach ($this->function->getParameters() as $parameter) {
             $param = '';
-            $type = (string) $parameter->getType();
+            $type = $parameter->getType();
+            if ($type instanceof ReflectionType) {
+                $typeAllowsNull = $type->allowsNull();
+                $type = (string) $type;
+            } else {
+                $type = '';
+            }
 
             if ($type !== '') {
-                if ($parameter->allowsNull() &&
-                    (!$parameter->isDefaultValueAvailable() || $parameter->getDefaultValue() !== null)
-                ) {
+                if ($typeAllowsNull) {
                     $param .= '?';
                 }
 
@@ -73,6 +77,7 @@ class FunctionFormatter
 
         if ($this->function->hasReturnType()) {
             $returnType = $this->function->getReturnType();
+
             if ($returnType instanceof ReflectionType) {
                 $allowsNull = $returnType->allowsNull();
                 $returnType = (string) $returnType;
@@ -95,11 +100,13 @@ class FunctionFormatter
         $t = PhpStubGenerator::$tab;
 
         $result = '';
-        $result .= FormatHelper::indentDocBlock((string) $this->function->getDocComment(), 1, $t) . $n
-            . $t;
+        $doc = $this->function->getDocComment();
+        if (is_string($doc)) {
+            $result .= FormatHelper::indentDocBlock($doc, 1, $t) . $n;
+        }
 
-        $result .= 'function ' . $this->function->getName() . '(' . $this->formatParams() . ')';
-        $this->formatReturnType();
+        $result .= $t . 'function ' . $this->function->getName() . '(' . $this->formatParams() . ')';
+        $result .= $this->formatReturnType();
 
         $result .= ' {}' . $n . $n;
 

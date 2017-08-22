@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Formatter;
 
-use ReflectionClass;
 use ReflectionProperty;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
 use setasign\PhpStubGenerator\PhpStubGenerator;
@@ -38,14 +37,17 @@ class PropertyFormatter
         }
 
         $result = '';
-        $result .= FormatHelper::indentDocBlock((string) $this->property->getDocComment(), 2, $t) . $n
-            . $t . $t;
+        $doc = $this->property->getDocComment();
+        if (is_string($doc)) {
+            $result .= FormatHelper::indentDocBlock($doc, 2, $t) . $n;
+        }
 
+        $result .= $t . $t;
         if ($this->property->isPublic()) {
             $result .= 'public ';
         } elseif ($this->property->isProtected()) {
             $result .= 'protected ';
-        } else {
+        } elseif ($this->property->isPrivate()) {
             $result .= 'private ';
         }
 

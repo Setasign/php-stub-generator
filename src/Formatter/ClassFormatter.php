@@ -81,11 +81,12 @@ class ClassFormatter
 
         // remove sub interfaces of other interfaces
         $interfaces = array_filter($interfaces, function (ReflectionClass $interface) use ($interfaces) {
+            $interfaceName = $interface->getName();
             foreach ($interfaces as $compareInterface) {
                 /**
                  * @var ReflectionClass $compareInterface
                  */
-                if ($interface->implementsInterface($compareInterface->getName())) {
+                if ($compareInterface->implementsInterface($interfaceName)) {
                     return false;
                 }
             }
