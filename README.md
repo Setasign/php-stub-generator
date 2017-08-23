@@ -44,6 +44,7 @@ Alternatively you could just call the cli helper.
 
 ```bash
 vendor/bin/php-stub-generator generate vendor/setasign/setapdf-core/library setapdf-core-stub.php
+```
 
 ## TODO
 - Traits are not supported yet
