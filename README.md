@@ -14,7 +14,7 @@ completion for your IDE when encrypting your library with e.g.
 A basic installation via Composer could be done this way:
 
 ```bash
-$ composer require setasign/php-stub-generator ^0.1.1-alpha
+$ composer require setasign/php-stub-generator ^0.2.0-alpha
 ```
 
 Composer will install the library to your project's `vendor/setasign/php-stub-generator` directory.
@@ -40,6 +40,10 @@ $output = $generator->generate();
 file_put_contents(__DIR__ . '/setapdf-core-stub.php', $output);
 ```
 
+Alternatively you could just call the cli helper.
+
+```bash
+vendor/bin/php-stub-generator generate vendor/setasign/setapdf-core/library setapdf-core-stub.php
+
 ## TODO
 - Traits are not supported yet
-- Command line tool: bin/generate-stub vendor/setasign/setapdf-core/library setapdf-core-stub.php

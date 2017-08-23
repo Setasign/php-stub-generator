@@ -1,0 +1,87 @@
+#!/usr/bin/env php
+<?php
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+
+if (version_compare('7.1.0', PHP_VERSION, '>=')) {
+    fwrite(
+        STDERR,
+        sprintf(
+            'This version of php-stub-generator is supported on PHP 7.1.' . PHP_EOL .
+            'You are using PHP %s (%s).' . PHP_EOL,
+            PHP_VERSION,
+            PHP_BINARY
+        )
+    );
+
+    die(1);
+}
+
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
+
+foreach ([__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php'] as $file) {
+    if (file_exists($file)) {
+        define('PHP_STUB_GENERATOR_COMPOSER_INSTALL', $file);
+        break;
+    }
+}
+
+if (!defined('PHP_STUB_GENERATOR_COMPOSER_INSTALL')) {
+    fwrite(
+        STDERR,
+        'You need to set up the project dependencies using Composer:' . PHP_EOL . PHP_EOL .
+        '    composer install' . PHP_EOL . PHP_EOL .
+        'You can learn all about Composer on https://getcomposer.org/.' . PHP_EOL
+    );
+
+    die(1);
+}
+
+require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
+
+(new Application('setasign php-stub-generator', 'v0.2.0-alpha'))
+->register('generate')
+    ->setDescription('Build the stub-file')
+    ->addArgument(
+        'source',
+        InputArgument::REQUIRED,
+        'The root directory of your library'
+    )
+    ->addArgument(
+        'output',
+        InputArgument::REQUIRED,
+        'The output file'
+    )
+    ->addOption(
+        'exclude',
+        null,
+        InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+        'Exclude any directories'
+    )
+    ->setCode(function (
+        \Symfony\Component\Console\Input\InputInterface $input,
+        \Symfony\Component\Console\Output\OutputInterface $output
+    ) {
+        $sourceDirectory = $input->getArgument('source');
+        $outputPath = $input->getArgument('output');
+        $excludes = $input->getOption('exclude');
+
+        if (!is_dir($sourceDirectory)) {
+            throw new \InvalidArgumentException('Invalid source directory!');
+        }
+
+        $generator = new \setasign\PhpStubGenerator\PhpStubGenerator();
+        $generator->addSource(
+            'setapdf-core',
+            new \setasign\PhpStubGenerator\Reader\AllFiles($sourceDirectory, $excludes)
+        );
+        $stubs = $generator->generate();
+        file_put_contents($outputPath, $stubs, LOCK_EX);
+        $output->write('The stubs were successfully generated to: ' . realpath($outputPath));
+    })
+->getApplication()
+->run();

@@ -12,10 +12,11 @@
 
     "require": {
         "php": "^7.1",
-        "ext-mbstring": "*",
         "ext-pcre": "*",
 
-        "goaop/parser-reflection": "^1.2"
+        "symfony/polyfill-mbstring": "^1.5",
+        "goaop/parser-reflection": "^1.2",
+        "symfony/console": "^3.3"
     },
 
     "require-dev": {
@@ -32,5 +33,9 @@
         "psr-4": {
             "setasign\\PhpStubGenerator\\Tests\\": "tests/"
         }
-    }
+    },
+
+    "bin": [
+        "./bin/php-stub-generator"
+    ]
 }
