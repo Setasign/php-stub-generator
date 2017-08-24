@@ -81,7 +81,7 @@ require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
         );
         $stubs = $generator->generate();
         file_put_contents($outputPath, $stubs, LOCK_EX);
-        $output->write('The stubs were successfully generated to: ' . realpath($outputPath));
+        $output->write('The stubs were successfully generated to: ' . realpath($outputPath) . PHP_EOL);
     })
 ->getApplication()
 ->run();
