@@ -43,7 +43,7 @@ if (!defined('PHP_STUB_GENERATOR_COMPOSER_INSTALL')) {
 
 require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
 
-(new Application('setasign php-stub-generator', 'v0.2.0-alpha'))
+(new Application('setasign php-stub-generator', 'v0.3.0-alpha'))
 ->register('generate')
     ->setDescription('Build the stub-file')
     ->addArgument(
