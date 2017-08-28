@@ -30,7 +30,8 @@ class MethodFormatterTest extends TestCase
         bool $hasDefault,
         ?string $defaultConstant,
         $defaultValue,
-        bool $isVariadic
+        bool $isVariadic,
+        bool $isPassedByReference
     ): \ReflectionParameter {
         $result = $this->getMockBuilder(\ReflectionParameter::class)
             ->setMethods([
@@ -40,7 +41,8 @@ class MethodFormatterTest extends TestCase
                 'isDefaultValueConstant',
                 'getDefaultValueConstantName',
                 'getDefaultValue',
-                'isVariadic'
+                'isVariadic',
+                'isPassedByReference'
             ])
             ->disableOriginalConstructor()
             ->getMock();
@@ -64,6 +66,7 @@ class MethodFormatterTest extends TestCase
             );
         }
         $result->method('isVariadic')->willReturn($isVariadic);
+        $result->method('isPassedByReference')->willReturn($isPassedByReference);
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
@@ -261,6 +264,7 @@ class MethodFormatterTest extends TestCase
             false,
             null,
             null,
+            false,
             false
         );
 
@@ -270,6 +274,7 @@ class MethodFormatterTest extends TestCase
             false,
             null,
             null,
+            false,
             false
         );
 
@@ -279,6 +284,7 @@ class MethodFormatterTest extends TestCase
             true,
             'TEST_CONSTANT',
             null,
+            false,
             false
         );
 
@@ -288,6 +294,7 @@ class MethodFormatterTest extends TestCase
             true,
             null,
             123,
+            false,
             false
         );
         $modifiers = ReflectionMethod::IS_PUBLIC;
@@ -316,6 +323,7 @@ class MethodFormatterTest extends TestCase
             false,
             null,
             null,
+            false,
             false
         );
 
@@ -325,12 +333,75 @@ class MethodFormatterTest extends TestCase
             false,
             null,
             null,
-            true
+            true,
+            false
         );
         $modifiers = ReflectionMethod::IS_PUBLIC;
         $reflectionMethod = $this->createReflectionMethodMock('test', 'SomeClass', $modifiers, [$a, $b], null, null);
 
         $expectedOutput = $t . $t . 'public function test(int $a, ...$b) {}' . $n . $n;
+        $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
+    }
+
+    public function testMethodWithPassedByReferenceParam()
+    {
+        $n = PhpStubGenerator::$eol;
+        $t = PhpStubGenerator::$tab;
+
+        $a = $this->createReflectionParameterMock(
+            'a',
+            $this->createReflectionTypeMock('int'),
+            false,
+            null,
+            null,
+            false,
+            true
+        );
+
+        $b = $this->createReflectionParameterMock(
+            'b',
+            null,
+            false,
+            null,
+            null,
+            false,
+            true
+        );
+        $modifiers = ReflectionMethod::IS_PUBLIC;
+        $reflectionMethod = $this->createReflectionMethodMock('test', 'SomeClass', $modifiers, [$a, $b], null, null);
+
+        $expectedOutput = $t . $t . 'public function test(int &$a, &$b) {}' . $n . $n;
+        $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
+    }
+
+    public function testMethodWithVariadicPassedByReferenceParam()
+    {
+        $n = PhpStubGenerator::$eol;
+        $t = PhpStubGenerator::$tab;
+
+        $a = $this->createReflectionParameterMock(
+            'a',
+            $this->createReflectionTypeMock('int'),
+            false,
+            null,
+            null,
+            false,
+            false
+        );
+
+        $b = $this->createReflectionParameterMock(
+            'b',
+            null,
+            false,
+            null,
+            null,
+            true,
+            true
+        );
+        $modifiers = ReflectionMethod::IS_PUBLIC;
+        $reflectionMethod = $this->createReflectionMethodMock('test', 'SomeClass', $modifiers, [$a, $b], null, null);
+
+        $expectedOutput = $t . $t . 'public function test(int $a, &...$b) {}' . $n . $n;
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
     }
 

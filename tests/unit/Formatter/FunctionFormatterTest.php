@@ -29,7 +29,8 @@ class FunctionFormatterTest extends TestCase
         bool $hasDefault,
         ?string $defaultConstant,
         $defaultValue,
-        bool $isVariadic
+        bool $isVariadic,
+        bool $isPassedByReference
     ): \ReflectionParameter {
         $result = $this->getMockBuilder(\ReflectionParameter::class)
             ->setMethods([
@@ -39,7 +40,8 @@ class FunctionFormatterTest extends TestCase
                 'isDefaultValueConstant',
                 'getDefaultValueConstantName',
                 'getDefaultValue',
-                'isVariadic'
+                'isVariadic',
+                'isPassedByReference'
             ])
             ->disableOriginalConstructor()
             ->getMock();
@@ -63,6 +65,7 @@ class FunctionFormatterTest extends TestCase
             );
         }
         $result->method('isVariadic')->willReturn($isVariadic);
+        $result->method('isPassedByReference')->willReturn($isPassedByReference);
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
@@ -147,6 +150,7 @@ class FunctionFormatterTest extends TestCase
             false,
             null,
             null,
+            false,
             false
         );
 
@@ -156,6 +160,7 @@ class FunctionFormatterTest extends TestCase
             false,
             null,
             null,
+            false,
             false
         );
 
@@ -165,6 +170,7 @@ class FunctionFormatterTest extends TestCase
             true,
             'TEST_CONSTANT',
             null,
+            false,
             false
         );
 
@@ -174,6 +180,7 @@ class FunctionFormatterTest extends TestCase
             true,
             null,
             123,
+            false,
             false
         );
         $reflectionFunction = $this->createReflectionFunctionMock('test', [$a, $b, $c, $d], null, null);
@@ -193,6 +200,7 @@ class FunctionFormatterTest extends TestCase
             false,
             null,
             null,
+            false,
             false
         );
 
@@ -202,11 +210,72 @@ class FunctionFormatterTest extends TestCase
             false,
             null,
             null,
-            true
+            true,
+            false
         );
         $reflectionFunction = $this->createReflectionFunctionMock('test', [$a, $b], null, null);
 
         $expectedOutput = $t . 'function test(int $a, ...$b) {}' . $n . $n;
+        $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
+    }
+
+    public function testFunctionWithPassedByReferenceParam()
+    {
+        $n = PhpStubGenerator::$eol;
+        $t = PhpStubGenerator::$tab;
+
+        $a = $this->createReflectionParameterMock(
+            'a',
+            $this->createReflectionTypeMock('int'),
+            false,
+            null,
+            null,
+            false,
+            true
+        );
+
+        $b = $this->createReflectionParameterMock(
+            'b',
+            null,
+            false,
+            null,
+            null,
+            false,
+            true
+        );
+        $reflectionFunction = $this->createReflectionFunctionMock('test', [$a, $b], null, null);
+
+        $expectedOutput = $t . 'function test(int &$a, &$b) {}' . $n . $n;
+        $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
+    }
+
+    public function testFunctionWithVariadicPassedByReferenceParam()
+    {
+        $n = PhpStubGenerator::$eol;
+        $t = PhpStubGenerator::$tab;
+
+        $a = $this->createReflectionParameterMock(
+            'a',
+            $this->createReflectionTypeMock('int'),
+            false,
+            null,
+            null,
+            false,
+            false
+        );
+
+        $b = $this->createReflectionParameterMock(
+            'b',
+            null,
+            false,
+            null,
+            null,
+            true,
+            true
+        );
+        $reflectionFunction = $this->createReflectionFunctionMock('test', [$a, $b], null, null);
+
+        $expectedOutput = $t . 'function test(int $a, &...$b) {}' . $n . $n;
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 

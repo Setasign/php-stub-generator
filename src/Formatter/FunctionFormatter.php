@@ -49,6 +49,10 @@ class FunctionFormatter
                 $param .= ' ';
             }
 
+            if ($parameter->isPassedByReference()) {
+                $param .= '&';
+            }
+
             if ($parameter->isVariadic()) {
                 $param .= '...';
             }
