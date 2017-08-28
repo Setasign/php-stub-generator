@@ -27,8 +27,7 @@ class PropertyFormatterTest extends TestCase
                 'isPublic',
                 'isProtected',
                 'isPrivate',
-                'isStatic',
-                'getValue'
+                'isStatic'
             ])
             ->disableOriginalConstructor()
             ->getMock();
@@ -52,13 +51,12 @@ class PropertyFormatterTest extends TestCase
         $property->method('isProtected')->willReturn(false);
         $property->method('isPrivate')->willReturn(false);
         $property->method('isStatic')->willReturn(false);
-        $property->method('getValue')->willReturn(123);
 
         /**
          * @var \ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'public $test = 123;' . $n . $n;
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
     public function testProtectedProperty()
@@ -75,13 +73,12 @@ class PropertyFormatterTest extends TestCase
         $property->method('isProtected')->willReturn(true);
         $property->method('isPrivate')->willReturn(false);
         $property->method('isStatic')->willReturn(false);
-        $property->method('getValue')->willReturn(123);
 
         /**
          * @var \ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'protected $test = 123;' . $n . $n;
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
     public function testPrivateProperty()
@@ -98,13 +95,12 @@ class PropertyFormatterTest extends TestCase
         $property->method('isProtected')->willReturn(false);
         $property->method('isPrivate')->willReturn(true);
         $property->method('isStatic')->willReturn(false);
-        $property->method('getValue')->willReturn(123);
 
         /**
          * @var \ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'private $test = 123;' . $n . $n;
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
     public function testStaticProperty()
@@ -121,13 +117,12 @@ class PropertyFormatterTest extends TestCase
         $property->method('isProtected')->willReturn(false);
         $property->method('isPrivate')->willReturn(false);
         $property->method('isStatic')->willReturn(true);
-        $property->method('getValue')->willReturn(123);
 
         /**
          * @var \ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'public static $test = 123;' . $n . $n;
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
     public function testIsNotDefaultProperty()
@@ -141,13 +136,12 @@ class PropertyFormatterTest extends TestCase
         $property->method('isProtected')->willReturn(false);
         $property->method('isPrivate')->willReturn(false);
         $property->method('isStatic')->willReturn(false);
-        $property->method('getValue')->willReturn(123);
 
         /**
          * @var \ReflectionProperty $property
          */
         $expectedOutput = '';
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
     public function testPropertyWithoutValue()
@@ -164,13 +158,12 @@ class PropertyFormatterTest extends TestCase
         $property->method('isProtected')->willReturn(false);
         $property->method('isPrivate')->willReturn(false);
         $property->method('isStatic')->willReturn(false);
-        $property->method('getValue')->willReturn(null);
 
         /**
          * @var \ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'public $test;' . $n . $n;
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, null))->format());
     }
 
     public function testPropertyFromParent()
@@ -184,13 +177,12 @@ class PropertyFormatterTest extends TestCase
         $property->method('isProtected')->willReturn(false);
         $property->method('isPrivate')->willReturn(false);
         $property->method('isStatic')->willReturn(false);
-        $property->method('getValue')->willReturn(123);
 
         /**
          * @var \ReflectionProperty $property
          */
         $expectedOutput = '';
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
     public function testPropertyWithDoc()
@@ -216,7 +208,6 @@ EOT
         $property->method('isProtected')->willReturn(false);
         $property->method('isPrivate')->willReturn(false);
         $property->method('isStatic')->willReturn(false);
-        $property->method('getValue')->willReturn(123);
 
         /**
          * @var \ReflectionProperty $property
@@ -230,6 +221,6 @@ EOT
             . $t . $t . ' * @var int' . $n
             . $t . $t . ' */' . $n
             . $t . $t . 'public $test = 123;' . $n . $n;
-        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property))->format());
+        $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 }

@@ -128,7 +128,8 @@ class ClassFormatter
             }
 
             foreach ($this->class->getProperties() as $property) {
-                $result .= (new PropertyFormatter($this->class->getName(), $property))->format();
+                $defaultValue = $this->class->getDefaultProperties()[$property->getName()] ?? null;
+                $result .= (new PropertyFormatter($this->class->getName(), $property, $defaultValue))->format();
             }
 
             foreach ($this->class->getMethods() as $method) {

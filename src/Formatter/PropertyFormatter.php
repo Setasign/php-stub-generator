@@ -19,10 +19,16 @@ class PropertyFormatter
      */
     protected $property;
 
-    public function __construct(string $className, ReflectionProperty $property)
+    /**
+     * @var mixed
+     */
+    protected $defaultValue;
+
+    public function __construct(string $className, ReflectionProperty $property, $defaultValue)
     {
         $this->className = $className;
         $this->property = $property;
+        $this->defaultValue = $defaultValue;
     }
 
     public function format(): string
@@ -56,7 +62,7 @@ class PropertyFormatter
         }
 
         $result .= '$' . $this->property->getName();
-        $formattedValue = FormatHelper::formatValue($this->property->getValue());
+        $formattedValue = FormatHelper::formatValue($this->defaultValue);
         if ($formattedValue !== 'null') {
             $result .= ' = ' . $formattedValue;
         }
