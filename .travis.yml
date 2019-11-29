@@ -11,5 +11,5 @@ before_script:
 
 install: composer update --prefer-dist --no-interaction
 
-script: phpunit
+script: vendor/bin/phpunit
   
