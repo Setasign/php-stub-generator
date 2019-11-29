@@ -17,9 +17,9 @@ class AllFiles implements ReaderInterface
 
     public function __construct(string $path, array $excludes = [])
     {
-        $_path = realpath($path);
-        if (!is_string($_path) || !is_dir($_path)) {
-            throw new \InvalidArgumentException(sprintf(
+        $_path = \realpath($path);
+        if (!\is_string($_path) || !\is_dir($_path)) {
+            throw new \InvalidArgumentException(\sprintf(
                 'Path "%s" couldn\'t be found or isn\'t an directory!',
                 $path
             ));
@@ -27,9 +27,9 @@ class AllFiles implements ReaderInterface
         $path = $_path;
 
         foreach ($excludes as $k => $exclude) {
-            $_exclude = realpath($exclude);
-            if (!is_string($_exclude)) {
-                throw new \InvalidArgumentException(sprintf(
+            $_exclude = \realpath($exclude);
+            if (!\is_string($_exclude)) {
+                throw new \InvalidArgumentException(\sprintf(
                     'Exclude Path "%s" couldn\'t be found!',
                     $exclude
                 ));
@@ -50,9 +50,9 @@ class AllFiles implements ReaderInterface
     {
         $result = [];
 
-        foreach (glob($directory . '/*', GLOB_ONLYDIR) as $subDirectory) {
-            $subDirectory = realpath($subDirectory);
-            if (in_array($subDirectory, $this->excludes, true)) {
+        foreach (\glob($directory . '/*', GLOB_ONLYDIR) as $subDirectory) {
+            $subDirectory = \realpath($subDirectory);
+            if (\in_array($subDirectory, $this->excludes, true)) {
                 continue;
             }
 
@@ -61,9 +61,9 @@ class AllFiles implements ReaderInterface
             }
         }
 
-        foreach (glob($directory . '/*.php') as $file) {
-            $file = realpath($file);
-            if (in_array($file, $this->excludes, true)) {
+        foreach (\glob($directory . '/*.php') as $file) {
+            $file = \realpath($file);
+            if (\in_array($file, $this->excludes, true)) {
                 continue;
             }
 

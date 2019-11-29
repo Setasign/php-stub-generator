@@ -24,6 +24,13 @@ class PropertyFormatter
      */
     protected $defaultValue;
 
+    /**
+     * PropertyFormatter constructor.
+     *
+     * @param string $className
+     * @param ReflectionProperty $property
+     * @param $defaultValue
+     */
     public function __construct(string $className, ReflectionProperty $property, $defaultValue)
     {
         $this->className = $className;
@@ -31,6 +38,9 @@ class PropertyFormatter
         $this->defaultValue = $defaultValue;
     }
 
+    /**
+     * @return string
+     */
     public function format(): string
     {
         $n = PhpStubGenerator::$eol;
@@ -44,7 +54,7 @@ class PropertyFormatter
 
         $result = '';
         $doc = $this->property->getDocComment();
-        if (is_string($doc)) {
+        if (\is_string($doc)) {
             $result .= FormatHelper::indentDocBlock($doc, 2, $t) . $n;
         }
 

@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Formatter;
 
-use ReflectionClass;
 use ReflectionMethod;
-use ReflectionType;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
@@ -27,6 +25,13 @@ class MethodFormatter extends FunctionFormatter
      */
     private $classIsInterface;
 
+    /**
+     * MethodFormatter constructor.
+     *
+     * @param string $className
+     * @param bool $classIsInterface
+     * @param ReflectionMethod $method
+     */
     public function __construct(string $className, bool $classIsInterface, ReflectionMethod $method)
     {
         $this->className = $className;
@@ -34,6 +39,10 @@ class MethodFormatter extends FunctionFormatter
         parent::__construct($method);
     }
 
+    /**
+     * @return string
+     * @throws \ReflectionException
+     */
     public function format(): string
     {
         $n = PhpStubGenerator::$eol;
@@ -45,7 +54,7 @@ class MethodFormatter extends FunctionFormatter
 
         $result = '';
         $doc = $this->function->getDocComment();
-        if (is_string($doc)) {
+        if (\is_string($doc)) {
             $result .= FormatHelper::indentDocBlock($doc, 2, $t) . $n;
         }
 

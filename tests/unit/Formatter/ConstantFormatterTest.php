@@ -38,7 +38,10 @@ class ConstantFormatterTest extends TestCase
             ->getMock();
     }
 
-    public function testSimpleConstant()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleConstant(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -64,7 +67,10 @@ class ConstantFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
     }
 
-    public function testWithInvalidConstant()
+    /**
+     * @throws \Throwable
+     */
+    public function testWithInvalidConstant(): void
     {
         $parser = $this->createParserInterfaceMock();
         $class = $this->createReflectionClassMock();
@@ -87,7 +93,10 @@ class ConstantFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
     }
 
-    public function testConstantFromParent()
+    /**
+     * @throws \Throwable
+     */
+    public function testConstantFromParent(): void
     {
         $parser = $this->createParserInterfaceMock();
         $class = $this->createReflectionClassMock();
@@ -114,7 +123,10 @@ class ConstantFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
     }
 
-    public function testConstantFromParentButChanged()
+    /**
+     * @throws \Throwable
+     */
+    public function testConstantFromParentButChanged(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -144,7 +156,10 @@ class ConstantFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
     }
 
-    public function testConstantFromInterface()
+    /**
+     * @throws \Throwable
+     */
+    public function testConstantFromInterface(): void
     {
         $parser = $this->createParserInterfaceMock();
         $class = $this->createReflectionClassMock();
@@ -171,7 +186,10 @@ class ConstantFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
     }
 
-    public function testConstantFromInterfaceButChanged()
+    /**
+     * @throws \Throwable
+     */
+    public function testConstantFromInterfaceButChanged(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -201,7 +219,10 @@ class ConstantFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
     }
 
-    public function testConstantWithDocComment()
+    /**
+     * @throws \Throwable
+     */
+    public function testConstantWithDocComment(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;

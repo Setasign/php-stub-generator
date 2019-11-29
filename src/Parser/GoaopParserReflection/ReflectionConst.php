@@ -72,7 +72,7 @@ class ReflectionConst implements \Reflector, ReflectionConstInterface
      * @param $stmts
      * @return Class_
      */
-    private function findClassNode($stmts)
+    private function findClassNode($stmts): Class_
     {
         foreach ($stmts as $node) {
             if ($node instanceof Namespace_) {
@@ -90,7 +90,7 @@ class ReflectionConst implements \Reflector, ReflectionConstInterface
      */
     public function getDocComment(): ?string
     {
-        if (false === $this->docCommentProcessed) {
+        if ($this->docCommentProcessed === false) {
             $this->docComment = null;
             /**
              *
@@ -115,18 +115,18 @@ class ReflectionConst implements \Reflector, ReflectionConstInterface
             // Then we take every comments from the constant node
             // Then if it's the first of the list we tank everything from the classConstNode
             // (and we order it from the closest to the further
-            $comments = array_reverse($this->constNode->getAttribute('comments', []));
+            $comments = \array_reverse($this->constNode->getAttribute('comments', []));
             if ($this->classConstNode->consts[0] == $this->constNode) {
-                $comments += array_reverse($this->classConstNode->getAttribute('comments', []));
+                $comments += \array_reverse($this->classConstNode->getAttribute('comments', []));
             }
-            if (count($comments) > 0) {
+            if (\count($comments) > 0) {
                 // we can have many doc comment for one statement
                 // We only take the closest one
-                while ($this->docComment === null && $currentComment = current($comments)) {
-                    if (strpos((string)$currentComment, '/**') === 0) {
+                while ($this->docComment === null && $currentComment = \current($comments)) {
+                    if (\strpos((string)$currentComment, '/**') === 0) {
                         $this->docComment = (string)$currentComment;
                     }
-                    next($comments);
+                    \next($comments);
                 }
             }
             $this->docCommentProcessed = true;

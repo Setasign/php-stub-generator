@@ -13,14 +13,14 @@
     "require": {
         "php": "^7.1",
         "ext-pcre": "*",
+        "ext-mbstring": "*",
 
-        "symfony/polyfill-mbstring": "^1.5",
-        "goaop/parser-reflection": "^1.2",
-        "symfony/console": "^3.3"
+        "goaop/parser-reflection": "^2.0",
+        "symfony/console": "^4.0"
     },
 
     "require-dev": {
-        "phpunit/phpunit": "^6.3"
+        "phpunit/phpunit": "^7.0"
     },
 
     "autoload": {

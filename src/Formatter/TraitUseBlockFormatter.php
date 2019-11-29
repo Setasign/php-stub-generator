@@ -13,11 +13,19 @@ class TraitUseBlockFormatter
      */
     private $class;
 
+    /**
+     * TraitUseBlockFormatter constructor.
+     *
+     * @param ReflectionClass $reflectionClass
+     */
     public function __construct(ReflectionClass $reflectionClass)
     {
         $this->class = $reflectionClass;
     }
 
+    /**
+     * @return string
+     */
     public function format(): string
     {
         $n = PhpStubGenerator::$eol;

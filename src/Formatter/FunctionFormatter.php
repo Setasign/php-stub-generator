@@ -10,24 +10,34 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class FunctionFormatter
 {
-    const DEFAULT_TYPES = ['int', 'float', 'bool', 'string', 'self', 'callable', 'array', 'object'];
+    public const DEFAULT_TYPES = ['int', 'float', 'bool', 'string', 'self', 'callable', 'array', 'object'];
 
     /**
      * @var ReflectionFunctionAbstract
      */
     protected $function;
 
+    /**
+     * FunctionFormatter constructor.
+     *
+     * @param ReflectionFunctionAbstract $function
+     */
     public function __construct(ReflectionFunctionAbstract $function)
     {
         $this->function = $function;
     }
 
+    /**
+     * @return string
+     * @throws \ReflectionException
+     */
     protected function formatParams(): string
     {
         $params = [];
         foreach ($this->function->getParameters() as $parameter) {
             $param = '';
             $type = $parameter->getType();
+            $typeAllowsNull = false;
             if ($type instanceof ReflectionType) {
                 $typeAllowsNull = $type->allowsNull();
                 $type = (string) $type;
@@ -40,10 +50,10 @@ class FunctionFormatter
                     $param .= '?';
                 }
 
-                if (in_array($type, self::DEFAULT_TYPES, true)) {
+                if (\in_array($type, self::DEFAULT_TYPES, true)) {
                     $param .= $type;
                 } else {
-                    $param .= '\\' . ltrim($type, '\\');
+                    $param .= '\\' . \ltrim($type, '\\');
                 }
 
                 $param .= ' ';
@@ -72,9 +82,12 @@ class FunctionFormatter
             unset($default);
         }
 
-        return implode(', ', $params);
+        return \implode(', ', $params);
     }
 
+    /**
+     * @return string
+     */
     protected function formatReturnType(): string
     {
         $result = '';
@@ -87,10 +100,10 @@ class FunctionFormatter
                 $returnType = (string) $returnType;
 
                 $result .= ': ' . ($allowsNull ? '?' : '');
-                if (in_array($returnType, self::DEFAULT_TYPES, true)) {
+                if (\in_array($returnType, self::DEFAULT_TYPES, true)) {
                     $result .= $returnType;
                 } else {
-                    $result .= '\\' . ltrim($returnType, '\\');
+                    $result .= '\\' . \ltrim($returnType, '\\');
                 }
             }
         }
@@ -98,6 +111,10 @@ class FunctionFormatter
         return $result;
     }
 
+    /**
+     * @return string
+     * @throws \ReflectionException
+     */
     public function format(): string
     {
         $n = PhpStubGenerator::$eol;
@@ -105,7 +122,7 @@ class FunctionFormatter
 
         $result = '';
         $doc = $this->function->getDocComment();
-        if (is_string($doc)) {
+        if (\is_string($doc)) {
             $result .= FormatHelper::indentDocBlock($doc, 1, $t) . $n;
         }
 

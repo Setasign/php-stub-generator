@@ -37,7 +37,10 @@ class PropertyFormatterTest extends TestCase
         return $property;
     }
 
-    public function testSimpleProperty()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleProperty(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -59,7 +62,10 @@ class PropertyFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
-    public function testProtectedProperty()
+    /**
+     * @throws \Throwable
+     */
+    public function testProtectedProperty(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -81,7 +87,10 @@ class PropertyFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
-    public function testPrivateProperty()
+    /**
+     * @throws \Throwable
+     */
+    public function testPrivateProperty(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -103,7 +112,10 @@ class PropertyFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
-    public function testStaticProperty()
+    /**
+     * @throws \Throwable
+     */
+    public function testStaticProperty(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -125,7 +137,10 @@ class PropertyFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
-    public function testIsNotDefaultProperty()
+    /**
+     * @throws \Throwable
+     */
+    public function testIsNotDefaultProperty(): void
     {
         $property = $this->createReflectionPropertyMock('TestClass');
 
@@ -144,7 +159,10 @@ class PropertyFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
-    public function testPropertyWithoutValue()
+    /**
+     * @throws \Throwable
+     */
+    public function testPropertyWithoutValue(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -166,7 +184,10 @@ class PropertyFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, null))->format());
     }
 
-    public function testPropertyFromParent()
+    /**
+     * @throws \Throwable
+     */
+    public function testPropertyFromParent(): void
     {
         $property = $this->createReflectionPropertyMock('AnotherClass');
 
@@ -185,7 +206,10 @@ class PropertyFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
     }
 
-    public function testPropertyWithDoc()
+    /**
+     * @throws \Throwable
+     */
+    public function testPropertyWithDoc(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;

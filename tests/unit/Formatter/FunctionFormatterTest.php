@@ -104,7 +104,10 @@ class FunctionFormatterTest extends TestCase
         return $result;
     }
 
-    public function testSimpleFunction()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleFunction(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -115,7 +118,10 @@ class FunctionFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 
-    public function testFunctionWithReturnInt()
+    /**
+     * @throws \Throwable
+     */
+    public function testFunctionWithReturnInt(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -127,7 +133,10 @@ class FunctionFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 
-    public function testFunctionWithReturnObject()
+    /**
+     * @throws \Throwable
+     */
+    public function testFunctionWithReturnObject(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -139,7 +148,10 @@ class FunctionFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 
-    public function testFunctionWithParams()
+    /**
+     * @throws \Throwable
+     */
+    public function testFunctionWithParams(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -189,7 +201,10 @@ class FunctionFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 
-    public function testFunctionWithVariadicParam()
+    /**
+     * @throws \Throwable
+     */
+    public function testFunctionWithVariadicParam(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -219,7 +234,10 @@ class FunctionFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 
-    public function testFunctionWithPassedByReferenceParam()
+    /**
+     * @throws \Throwable
+     */
+    public function testFunctionWithPassedByReferenceParam(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -249,7 +267,10 @@ class FunctionFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 
-    public function testFunctionWithVariadicPassedByReferenceParam()
+    /**
+     * @throws \Throwable
+     */
+    public function testFunctionWithVariadicPassedByReferenceParam(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -279,7 +300,10 @@ class FunctionFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new FunctionFormatter($reflectionFunction))->format());
     }
 
-    public function testFunctionWithDoc()
+    /**
+     * @throws \Throwable
+     */
+    public function testFunctionWithDoc(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;

@@ -39,7 +39,10 @@ class ClassFormatterTest extends TestCase
             ->getMock();
     }
 
-    public function testSimpleClass()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleClass(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -70,7 +73,10 @@ class ClassFormatterTest extends TestCase
         $this->assertSame($expectedResult, $formatter->format(true));
     }
 
-    public function testSimpleInterface()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleInterface(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -101,7 +107,10 @@ class ClassFormatterTest extends TestCase
         $this->assertSame($expectedResult, $formatter->format(true));
     }
 
-    public function testSimpleTrait()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleTrait(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -132,7 +141,10 @@ class ClassFormatterTest extends TestCase
         $this->assertSame($expectedResult, $formatter->format(true));
     }
 
-    public function testSimpleAbstract()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleAbstract(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -163,7 +175,10 @@ class ClassFormatterTest extends TestCase
         $this->assertSame($expectedResult, $formatter->format(true));
     }
 
-    public function testSimpleFinal()
+    /**
+     * @throws \Throwable
+     */
+    public function testSimpleFinal(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -194,7 +209,10 @@ class ClassFormatterTest extends TestCase
         $this->assertSame($expectedResult, $formatter->format(true));
     }
 
-    public function testComplexClass()
+    /**
+     * @throws \Throwable
+     */
+    public function testComplexClass(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -328,7 +346,10 @@ EOT
         $this->assertSame($expectedResult, $formatter->format(true));
     }
 
-    public function testComplexInterface()
+    /**
+     * @throws \Throwable
+     */
+    public function testComplexInterface(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;

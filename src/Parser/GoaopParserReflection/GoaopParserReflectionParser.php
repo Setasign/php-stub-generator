@@ -51,13 +51,13 @@ class GoaopParserReflectionParser implements ParserInterface
     {
         $this->resolveNamespaces();
 
-        $paths = array_map(function (array $classes) {
-            return array_map(function (ReflectionClass $reflectionClass) {
+        $paths = \array_map(function (array $classes) {
+            return \array_map(function (ReflectionClass $reflectionClass) {
                 return $reflectionClass->getFileName();
             }, $classes);
         }, $this->classes);
 
-        $classMap = array_merge(...array_values($paths));
+        $classMap = \array_merge(...\array_values($paths));
         $locator = new ClassListLocator($classMap);
         ReflectionEngine::init($locator);
     }
@@ -95,8 +95,8 @@ class GoaopParserReflectionParser implements ParserInterface
             throw new \BadMethodCallException('GoaopParserReflectionParser::parse wasn\'t called yet!');
         }
 
-        if (!array_key_exists($classOrFunctionName, $this->aliases[$type])) {
-            throw new \InvalidArgumentException(sprintf(
+        if (!\array_key_exists($classOrFunctionName, $this->aliases[$type])) {
+            throw new \InvalidArgumentException(\sprintf(
                 'Unknown class or function "%s"!',
                 $classOrFunctionName
             ));
@@ -107,16 +107,16 @@ class GoaopParserReflectionParser implements ParserInterface
 
     protected function resolveNamespaces(): void
     {
-        $files = array_map(function (ReaderInterface $source) {
+        $files = \array_map(function (ReaderInterface $source) {
             return $source->getFiles();
-        }, array_values($this->sources));
-        $files = array_merge(...$files);
+        }, \array_values($this->sources));
+        $files = \array_merge(...$files);
 
-        $files = array_map(function (string $file) {
+        $files = \array_map(function (string $file) {
             return new ReflectionFile($file);
         }, $files);
 
-        $fileNamespaces = array_map(function (ReflectionFile $file) {
+        $fileNamespaces = \array_map(function (ReflectionFile $file) {
             return $file->getFileNamespaces();
         }, $files);
 
@@ -126,7 +126,7 @@ class GoaopParserReflectionParser implements ParserInterface
         $classes = [];
         $functions = [];
         $aliases = [];
-        array_walk($fileNamespaces, function (array $fileNamespaces) use (&$classes, &$functions, &$aliases) {
+        \array_walk($fileNamespaces, function (array $fileNamespaces) use (&$classes, &$functions, &$aliases) {
             foreach ($fileNamespaces as $fileNamespace) {
                 /**
                  * @var ReflectionFileNamespace $fileNamespace

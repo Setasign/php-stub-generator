@@ -1,9 +1,14 @@
 #!/usr/bin/env php
 <?php
+declare(strict_types=1);
 
+use setasign\PhpStubGenerator\PhpStubGenerator;
+use setasign\PhpStubGenerator\Reader\AllFiles;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 if (version_compare('7.1.0', PHP_VERSION, '>=')) {
     fwrite(
@@ -41,9 +46,11 @@ if (!defined('PHP_STUB_GENERATOR_COMPOSER_INSTALL')) {
     die(1);
 }
 
+/** @noinspection PhpIncludeInspection */
 require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
 
-(new Application('setasign php-stub-generator', 'v0.3.0-alpha'))
+/** @noinspection PhpUnhandledExceptionInspection */
+(new Application('setasign php-stub-generator', 'v1.0.0'))
 ->register('generate')
     ->setDescription('Build the stub-file')
     ->addArgument(
@@ -63,8 +70,8 @@ require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
         'Exclude any directories'
     )
     ->setCode(function (
-        \Symfony\Component\Console\Input\InputInterface $input,
-        \Symfony\Component\Console\Output\OutputInterface $output
+        InputInterface $input,
+        OutputInterface $output
     ) {
         $sourceDirectory = $input->getArgument('source');
         $outputPath = $input->getArgument('output');
@@ -74,10 +81,10 @@ require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
             throw new \InvalidArgumentException('Invalid source directory!');
         }
 
-        $generator = new \setasign\PhpStubGenerator\PhpStubGenerator();
+        $generator = new PhpStubGenerator();
         $generator->addSource(
             'setapdf-core',
-            new \setasign\PhpStubGenerator\Reader\AllFiles($sourceDirectory, $excludes)
+            new AllFiles($sourceDirectory, $excludes)
         );
         $stubs = $generator->generate();
         file_put_contents($outputPath, $stubs, LOCK_EX);

@@ -21,8 +21,8 @@ class ClassListLocator implements LocatorInterface
 
     public function locateClass($className)
     {
-        if (strpos($className, '\\') === 0) {
-            $className = ltrim($className, '\\');
+        if (\strpos($className, '\\') === 0) {
+            $className = \ltrim($className, '\\');
         }
 
         if (!isset($this->classMap[$className])) {

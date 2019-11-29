@@ -28,21 +28,35 @@ class PhpStubGenerator
      */
     private $sources = [];
 
+    /**
+     * @param string $name
+     * @param ReaderInterface $reader
+     */
     public function addSource(string $name, ReaderInterface $reader): void
     {
         $this->sources[$name] = $reader;
     }
 
+    /**
+     * @param string $name
+     */
     public function removeSource(string $name): void
     {
         unset($this->sources[$name]);
     }
 
+    /**
+     * @return ParserInterface
+     */
     public function getParser(): ParserInterface
     {
         return new GoaopParserReflectionParser($this->sources);
     }
 
+    /**
+     * @return string
+     * @throws \ReflectionException
+     */
     public function generate(): string
     {
         $n = self::$eol;
@@ -89,6 +103,10 @@ class PhpStubGenerator
         return $result;
     }
 
+    /**
+     * @param array $aliases
+     * @return string
+     */
     protected function formatAliases(array $aliases): string
     {
         $n = self::$eol;
@@ -97,7 +115,7 @@ class PhpStubGenerator
         $result = '';
         foreach ($aliases as $fullName => $alias) {
             $result .= $t . 'use ' . $fullName;
-            if ($alias !== substr($fullName, -strlen($alias))) {
+            if ($alias !== \substr($fullName, -\strlen($alias))) {
                 $result .= ' as ' . $alias;
             }
             $result .= ';' . $n;

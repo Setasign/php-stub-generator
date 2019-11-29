@@ -32,6 +32,11 @@ class ClassFormatter
         $this->class = $class;
     }
 
+    /**
+     * @param bool $ignoreSubElements
+     * @return string
+     * @throws \ReflectionException
+     */
     public function format(bool $ignoreSubElements = false): string
     {
         $n = PhpStubGenerator::$eol;
@@ -64,13 +69,13 @@ class ClassFormatter
         } catch (\Throwable $e) {
         }
         if ($parentClass instanceof ReflectionClass) {
-            $result .= ' extends \\' . ltrim($parentClass->getName(), '\\');
+            $result .= ' extends \\' . \ltrim($parentClass->getName(), '\\');
         }
 
         $interfaces = $this->class->getInterfaces();
         // remove interfaces from parent class if there is a parent class
         if ($parentClass instanceof ReflectionClass) {
-            $interfaces = array_filter($interfaces, function (ReflectionClass $interface) use ($parentClass) {
+            $interfaces = \array_filter($interfaces, function (ReflectionClass $interface) use ($parentClass) {
                 // if the $parentClass is a default php class it cannot use an user defined interface
                 if (!$parentClass->isUserDefined() && $interface->isUserDefined()) {
                     return false;
@@ -81,13 +86,12 @@ class ClassFormatter
         }
 
         // remove sub interfaces of other interfaces
-        $interfaces = array_filter($interfaces, function (ReflectionClass $interface) use ($interfaces) {
+        $interfaces = \array_filter($interfaces, function (ReflectionClass $interface) use ($interfaces) {
             $interfaceName = $interface->getName();
             foreach ($interfaces as $compareInterface) {
                 /**
                  * @var ReflectionClass $compareInterface
                  */
-                /** @noinspection NotOptimalIfConditionsInspection */
                 // if the $compareInterface is a default php interface it cannot use an user defined interface
                 if ((!$compareInterface->isUserDefined() && $interface->isUserDefined())
                     || $compareInterface->implementsInterface($interfaceName)
@@ -98,22 +102,22 @@ class ClassFormatter
             return true;
         });
 
-        $interfaceNames = array_map(function (ReflectionClass $interface) {
+        $interfaceNames = \array_map(function (ReflectionClass $interface) {
             return $interface->getName();
         }, $interfaces);
 
-        if (count($interfaceNames) > 0) {
+        if (\count($interfaceNames) > 0) {
             if ($this->class->isInterface()) {
                 $result .= ' extends ';
             } else {
                 $result .= ' implements ';
             }
 
-            $interfaceNames = array_map(function ($interfaceName) {
-                return '\\' . ltrim($interfaceName, '\\');
+            $interfaceNames = \array_map(function ($interfaceName) {
+                return '\\' . \ltrim($interfaceName, '\\');
             }, $interfaceNames);
 
-            $result .= implode(', ', $interfaceNames);
+            $result .= \implode(', ', $interfaceNames);
         }
 
         $result .= $n

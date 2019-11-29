@@ -8,7 +8,10 @@ use setasign\PhpStubGenerator\Helper\FormatHelper;
 
 class FormatHelperTest extends TestCase
 {
-    public function indentDocBlockDataProvider()
+    /**
+     * @return array
+     */
+    public function indentDocBlockDataProvider(): array
     {
         $t1 = '    ';
         $t2 = "\t";
@@ -45,17 +48,18 @@ class FormatHelperTest extends TestCase
 
     /**
      * @dataProvider indentDocBlockDataProvider
+     *
      * @param string $expectedOutput
      * @param string $block
      * @param int $tabCount
      * @param string $tabChar
      */
-    public function testIndentDocBlock(string $expectedOutput, string $block, int $tabCount, string $tabChar)
+    public function testIndentDocBlock(string $expectedOutput, string $block, int $tabCount, string $tabChar): void
     {
         $this->assertSame(
             $expectedOutput,
             FormatHelper::indentDocBlock($block, $tabCount, $tabChar),
-            sprintf(
+            \sprintf(
                 'Block = "%s" TabCount = "%d" TabChar "%s"',
                 $block,
                 $tabCount,
@@ -64,7 +68,10 @@ class FormatHelperTest extends TestCase
         );
     }
 
-    public function formatValueDataProvider()
+    /**
+     * @return array
+     */
+    public function formatValueDataProvider(): array
     {
         return [
             ['\'\'', ''],
@@ -84,15 +91,16 @@ class FormatHelperTest extends TestCase
 
     /**
      * @dataProvider formatValueDataProvider
+     *
      * @param string $expectedOutput
      * @param string $value
      */
-    public function testFormatValue(string $expectedOutput, $value)
+    public function testFormatValue(string $expectedOutput, $value): void
     {
         $this->assertSame(
             $expectedOutput,
             FormatHelper::formatValue($value),
-            sprintf('Value = "%s"', print_r($value, true))
+            \sprintf('Value = "%s"', \print_r($value, true))
         );
     }
 }

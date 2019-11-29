@@ -26,6 +26,13 @@ class ConstantFormatter
      */
     private $constantName;
 
+    /**
+     * ConstantFormatter constructor.
+     *
+     * @param ParserInterface $parser
+     * @param ReflectionClass $class
+     * @param string $constantName
+     */
     public function __construct(ParserInterface $parser, ReflectionClass $class, string $constantName)
     {
         $this->parser = $parser;
@@ -33,6 +40,9 @@ class ConstantFormatter
         $this->constantName = $constantName;
     }
 
+    /**
+     * @return string
+     */
     public function format(): string
     {
         $n = PhpStubGenerator::$eol;
@@ -73,7 +83,7 @@ class ConstantFormatter
         $result = '';
         if ($reflectionConst instanceof ReflectionConst) {
             $docComment = $reflectionConst->getDocComment();
-            if (is_string($docComment)) {
+            if (\is_string($docComment)) {
                 $result .= FormatHelper::indentDocBlock($docComment, 2, $t) . $n;
             }
         }

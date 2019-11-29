@@ -134,7 +134,10 @@ class MethodFormatterTest extends TestCase
         return $result;
     }
 
-    public function testPublicMethod()
+    /**
+     * @throws \Throwable
+     */
+    public function testPublicMethod(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -146,7 +149,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $method))->format());
     }
 
-    public function testProtectedMethod()
+    /**
+     * @throws \Throwable
+     */
+    public function testProtectedMethod(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -158,7 +164,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $method))->format());
     }
 
-    public function testPrivateMethod()
+    /**
+     * @throws \Throwable
+     */
+    public function testPrivateMethod(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -170,7 +179,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $method))->format());
     }
 
-    public function testStaticMethod()
+    /**
+     * @throws \Throwable
+     */
+    public function testStaticMethod(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -182,7 +194,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $method))->format());
     }
 
-    public function testFinalMethod()
+    /**
+     * @throws \Throwable
+     */
+    public function testFinalMethod(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -194,7 +209,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $method))->format());
     }
 
-    public function testAbstractMethod()
+    /**
+     * @throws \Throwable
+     */
+    public function testAbstractMethod(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -206,7 +224,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $method))->format());
     }
 
-    public function testMethodFromParent()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodFromParent(): void
     {
         $modifiers = ReflectionMethod::IS_PUBLIC;
         $method = $this->createReflectionMethodMock('test', 'AnotherClass', $modifiers, [], null, null);
@@ -215,7 +236,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $method))->format());
     }
 
-    public function testMethodInInterface()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodInInterface(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -227,7 +251,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', true, $method))->format());
     }
 
-    public function testMethodWithReturnInt()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodWithReturnInt(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -240,7 +267,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
     }
 
-    public function testMethodWithReturnObject()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodWithReturnObject(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -253,7 +283,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
     }
 
-    public function testMethodWithParams()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodWithParams(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -312,7 +345,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
     }
 
-    public function testMethodWithVariadicParam()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodWithVariadicParam(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -343,7 +379,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
     }
 
-    public function testMethodWithPassedByReferenceParam()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodWithPassedByReferenceParam(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -374,7 +413,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
     }
 
-    public function testMethodWithVariadicPassedByReferenceParam()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodWithVariadicPassedByReferenceParam(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
@@ -405,7 +447,10 @@ class MethodFormatterTest extends TestCase
         $this->assertSame($expectedOutput, (new MethodFormatter('SomeClass', false, $reflectionMethod))->format());
     }
 
-    public function testMethodWithDoc()
+    /**
+     * @throws \Throwable
+     */
+    public function testMethodWithDoc(): void
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
