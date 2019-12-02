@@ -53,4 +53,4 @@ vendor/bin/php-stub-generator generate vendor/setasign/setapdf-core/library seta
   Additionally the "declaring class" of imported trait methods is the importing class and not like expected the trait.
 - Calculated constants or constants that use other constants like \_\_DIR\_\_ will be filled with the values of the 
   runtime environment.
-- At the moment we only support public constants due to [goaop/parser-reflection](https://github.com/goaop/parser-reflection).
+- At the moment we only support public class constants due to missing support of ReflectionClassConstant in [goaop/parser-reflection](https://github.com/goaop/parser-reflection).
