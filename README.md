@@ -14,16 +14,17 @@ completion for your IDE when encrypting your library with e.g.
 A basic installation via Composer could be done this way:
 
 ```bash
-$ composer require setasign/php-stub-generator ^0.3.0-alpha
+$ composer require setasign/php-stub-generator ^0.4
 ```
 
-Composer will install the library to your project's `vendor/setasign/php-stub-generator` directory.
+Composer will install the tool to your project's `vendor/setasign/php-stub-generator` directory.
 
 
 ## Basic usage
 
 ```php
 <?php
+declare(strict_types=1);
 
 use setasign\PhpStubGenerator\PhpStubGenerator;
 use setasign\PhpStubGenerator\Reader\AllFiles;
@@ -46,5 +47,10 @@ Alternatively you could just call the cli helper.
 vendor/bin/php-stub-generator generate vendor/setasign/setapdf-core/library setapdf-core-stub.php
 ```
 
-## TODO
-- Traits are not supported yet
+## Drawbacks / TODOs
+- Traits are not supported yet and probably won't be because of bugs like [this](https://bugs.php.net/bug.php?id=69180).
+  The actual reflection api doesn't give enough information to rebuild the conflict resolution block.
+  Additionally the "declaring class" of imported trait methods is the importing class and not like expected the trait.
+- Calculated constants or constants that use other constants like \_\_DIR\_\_ will be filled with the values of the 
+  runtime environment.
+- At the moment we only support public constants due to [goaop/parser-reflection](https://github.com/goaop/parser-reflection).

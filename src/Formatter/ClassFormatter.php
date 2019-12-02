@@ -124,7 +124,6 @@ class ClassFormatter
             . $t . '{' . $n;
 
         if (!$ignoreSubElements) {
-            // todo implement traitUseBlockFormatter
 //            $result .= (new TraitUseBlockFormatter($this->class))->format();
 
             foreach ($this->class->getConstants() as $constantName => $constantValue) {

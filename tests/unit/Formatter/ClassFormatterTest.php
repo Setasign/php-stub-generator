@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use setasign\PhpStubGenerator\Formatter\ClassFormatter;
 use setasign\PhpStubGenerator\Parser\ParserInterface;
@@ -17,7 +18,7 @@ class ClassFormatterTest extends TestCase
             ->getMockForAbstractClass();
     }
 
-    protected function createReflectionClassMock(): \PHPUnit_Framework_MockObject_MockObject
+    protected function createReflectionClassMock(): MockObject
     {
         return $this->getMockBuilder(\ReflectionClass::class)
             ->disableOriginalConstructor()

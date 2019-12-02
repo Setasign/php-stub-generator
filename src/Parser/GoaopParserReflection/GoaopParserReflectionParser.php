@@ -32,6 +32,11 @@ class GoaopParserReflectionParser implements ParserInterface
     /**
      * @var null|array
      */
+    private $constants;
+
+    /**
+     * @var null|array
+     */
     private $aliases;
 
     /**
@@ -87,6 +92,18 @@ class GoaopParserReflectionParser implements ParserInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getConstants(): array
+    {
+        if ($this->constants === null) {
+            throw new \BadMethodCallException('GoaopParserReflectionParser::parse wasn\'t called yet!');
+        }
+
+        return $this->constants;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getAliases(string $classOrFunctionName, string $type): array
@@ -116,7 +133,7 @@ class GoaopParserReflectionParser implements ParserInterface
             return new ReflectionFile($file);
         }, $files);
 
-        $fileNamespaces = \array_map(function (ReflectionFile $file) {
+        $allFileNamespaces = \array_map(function (ReflectionFile $file) {
             return $file->getFileNamespaces();
         }, $files);
 
@@ -125,8 +142,9 @@ class GoaopParserReflectionParser implements ParserInterface
          */
         $classes = [];
         $functions = [];
+        $constants = [];
         $aliases = [];
-        \array_walk($fileNamespaces, function (array $fileNamespaces) use (&$classes, &$functions, &$aliases) {
+        foreach ($allFileNamespaces as $fileNamespaces) {
             foreach ($fileNamespaces as $fileNamespace) {
                 /**
                  * @var ReflectionFileNamespace $fileNamespace
@@ -144,10 +162,15 @@ class GoaopParserReflectionParser implements ParserInterface
                     $functions[$namespace][$functionName] = $function;
                     $aliases[self::TYPE_FUNCTION][$functionName] = $namespaceAliases;
                 }
+
+                foreach ($fileNamespace->getConstants(true) as $constantName => $constantValue) {
+                    $constants[$namespace][$constantName] = $constantValue;
+                }
             }
-        });
+        }
         $this->classes = $classes;
         $this->functions = $functions;
+        $this->constants = $constants;
         $this->aliases = $aliases;
     }
 

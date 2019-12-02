@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use setasign\PhpStubGenerator\Formatter\ConstantFormatter;
 use setasign\PhpStubGenerator\Parser\ParserInterface;
@@ -11,21 +12,21 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ConstantFormatterTest extends TestCase
 {
-    protected function createParserInterfaceMock(): \PHPUnit_Framework_MockObject_MockObject
+    protected function createParserInterfaceMock(): MockObject
     {
         return $this->getMockBuilder(ParserInterface::class)
             ->setMethods(['getConstantReflection'])
             ->getMockForAbstractClass();
     }
 
-    protected function createReflectionConstMock(): \PHPUnit_Framework_MockObject_MockObject
+    protected function createReflectionConstMock(): MockObject
     {
         return $this->getMockBuilder(ReflectionConst::class)
             ->setMethods(['getDocComment'])
             ->getMockForAbstractClass();
     }
 
-    protected function createReflectionClassMock(): \PHPUnit_Framework_MockObject_MockObject
+    protected function createReflectionClassMock(): MockObject
     {
         return $this->getMockBuilder(\ReflectionClass::class)
             ->disableOriginalConstructor()

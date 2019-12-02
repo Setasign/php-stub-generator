@@ -72,7 +72,7 @@ class ReflectionConst implements \Reflector, ReflectionConstInterface
      * @param $stmts
      * @return Class_
      */
-    private function findClassNode($stmts): Class_
+    private function findClassNode($stmts): ?Class_
     {
         foreach ($stmts as $node) {
             if ($node instanceof Namespace_) {

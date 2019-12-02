@@ -61,6 +61,7 @@ class PhpStubGenerator
     {
         $n = self::$eol;
         $result = '<?php' . $n
+                . '/** @noinspection ALL */' . $n . $n
                 . '// @codingStandardsIgnoreFile' . $n . $n;
 
         $parser = $this->getParser();
@@ -74,7 +75,7 @@ class PhpStubGenerator
                 $isGlobalNamespace = $namespace === '';
                 $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
                     . '{' . $n;
-                $result .= $this->formatAliases(
+                $result .= $this->formatNamespaceAliases(
                     $parser->getAliases($class->getName(), ParserInterface::TYPE_CLASS)
                 );
                 $result .= $n
@@ -91,7 +92,7 @@ class PhpStubGenerator
                 $isGlobalNamespace = ($namespace === '');
                 $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
                     . '{' . $n;
-                $result .= $this->formatAliases(
+                $result .= $this->formatNamespaceAliases(
                     $parser->getAliases($function->getName(), ParserInterface::TYPE_FUNCTION)
                 );
                 $result .= $n
@@ -107,13 +108,22 @@ class PhpStubGenerator
      * @param array $aliases
      * @return string
      */
-    protected function formatAliases(array $aliases): string
+    protected function formatNamespaceAliases(array $aliases): string
     {
         $n = self::$eol;
         $t = self::$tab;
 
         $result = '';
         foreach ($aliases as $fullName => $alias) {
+            // todo: can be removed when this pull request is confirmed and tagged
+            // https://github.com/goaop/parser-reflection/pull/96
+            if ($alias === null) {
+                \preg_match('~\\\\?(?P<last>[^\\\\]+)$~', $fullName, $matches);
+                $alias = $matches['last'] ?? $fullName;
+            } else {
+                $alias = (string) $alias;
+            }
+
             $result .= $t . 'use ' . $fullName;
             if ($alias !== \substr($fullName, -\strlen($alias))) {
                 $result .= ' as ' . $alias;

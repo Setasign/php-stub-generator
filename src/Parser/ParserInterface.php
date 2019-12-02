@@ -26,6 +26,12 @@ interface ParserInterface
     public function getFunctions(): array;
 
     /**
+     * @return array Returns an array like this: ['NamespaceName' => ['ConstantName' => 'ConstantValue']]
+     * @throws \BadMethodCallException If parse wasn't called yet.
+     */
+    public function getConstants(): array;
+
+    /**
      * Returns an array with all use aliases for $classOrFunctionName.
      *
      * @param string $classOrFunctionName

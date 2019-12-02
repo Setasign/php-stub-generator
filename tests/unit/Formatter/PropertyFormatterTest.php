@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use setasign\PhpStubGenerator\Formatter\PropertyFormatter;
 use setasign\PhpStubGenerator\PhpStubGenerator;
@@ -11,7 +12,7 @@ class PropertyFormatterTest extends TestCase
 {
     protected function createReflectionPropertyMock(
         string $declaringClassName
-    ): \PHPUnit_Framework_MockObject_MockObject {
+    ): MockObject {
         $declaringClass = $this->getMockBuilder(\ReflectionClass::class)
             ->setMethods(['getName'])
             ->disableOriginalConstructor()
