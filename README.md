@@ -14,7 +14,7 @@ completion for your IDE when encrypting your library with e.g.
 A basic installation via Composer could be done this way:
 
 ```bash
-$ composer require setasign/php-stub-generator ^0.4
+$ composer require setasign/php-stub-generator ^0.4@alpha
 ```
 
 Composer will install the tool to your project's `vendor/setasign/php-stub-generator` directory.
