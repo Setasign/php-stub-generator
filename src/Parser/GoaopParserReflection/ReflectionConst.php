@@ -49,7 +49,7 @@ class ReflectionConst implements \Reflector, ReflectionConstInterface
         foreach ($classNode->stmts as $classSubNode) {
             if ($classSubNode instanceof ClassConst) {
                 foreach ($classSubNode->consts as $constNode) {
-                    if ($constNode->name === $constName) {
+                    if (((string) $constNode->name) === $constName) {
                         $this->classConstNode = $classSubNode;
                         $this->constNode = $constNode;
                         break 2;
