@@ -13,7 +13,7 @@ class MethodFormatterTest extends TestCase
     protected function createReflectionTypeMock(string $name, bool $allowsNull = false): \ReflectionType
     {
         $result = $this->getMockBuilder(\ReflectionType::class)
-            ->setMethods(['allowsNull', '__toString'])
+            ->onlyMethods(['allowsNull', '__toString'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -34,7 +34,7 @@ class MethodFormatterTest extends TestCase
         bool $isPassedByReference
     ): \ReflectionParameter {
         $result = $this->getMockBuilder(\ReflectionParameter::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getName',
                 'getType',
                 'isDefaultValueAvailable',
@@ -81,7 +81,7 @@ class MethodFormatterTest extends TestCase
         ?string $doc
     ): ReflectionMethod {
         $result = $this->getMockBuilder(ReflectionMethod::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getName',
                 'getDeclaringClass',
                 'getParameters',
@@ -101,7 +101,7 @@ class MethodFormatterTest extends TestCase
         $result->method('getName')->willReturn($name);
 
         $declaringClass = $this->getMockBuilder(\ReflectionClass::class)
-            ->setMethods(['getName'])
+            ->onlyMethods(['getName'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -128,6 +128,7 @@ class MethodFormatterTest extends TestCase
             $result->method('getReturnType')->willThrowException(new \Exception('Can\'t resolve return type'));
         }
 
+        /** @noinspection ProperNullCoalescingOperatorUsageInspection */
         $result->method('getDocComment')->willReturn($doc ?? false);
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */

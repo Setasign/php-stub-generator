@@ -24,6 +24,11 @@ class PhpStubGenerator
     public static $tab = '    ';
 
     /**
+     * @var bool
+     */
+    public static $addClassConstantsVisibility = false;
+
+    /**
      * @var ReaderInterface[]
      */
     private $sources = [];
@@ -79,7 +84,7 @@ class PhpStubGenerator
                     $parser->getAliases($class->getName(), ParserInterface::TYPE_CLASS)
                 );
                 $result .= $n
-                    . (new ClassFormatter($parser, $class))->format()
+                    . (new ClassFormatter($class))->format()
                     . '}' . $n . $n;
             }
         }

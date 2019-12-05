@@ -5,16 +5,10 @@ namespace setasign\PhpStubGenerator\Formatter;
 
 use ReflectionClass;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
-use setasign\PhpStubGenerator\Parser\ParserInterface;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ClassFormatter
 {
-    /**
-     * @var ParserInterface
-     */
-    private $parser;
-
     /**
      * @var ReflectionClass
      */
@@ -23,12 +17,10 @@ class ClassFormatter
     /**
      * ClassFormatter constructor.
      *
-     * @param ParserInterface $parser
      * @param ReflectionClass $class
      */
-    public function __construct(ParserInterface $parser, ReflectionClass $class)
+    public function __construct(ReflectionClass $class)
     {
-        $this->parser = $parser;
         $this->class = $class;
     }
 
@@ -124,10 +116,8 @@ class ClassFormatter
             . $t . '{' . $n;
 
         if (!$ignoreSubElements) {
-//            $result .= (new TraitUseBlockFormatter($this->class))->format();
-
-            foreach ($this->class->getConstants() as $constantName => $constantValue) {
-                $result .= (new ConstantFormatter($this->parser, $this->class, $constantName))->format();
+            foreach ($this->class->getReflectionConstants() as $constant) {
+                $result .= (new ConstantFormatter($this->class->getName(), $constant))->format();
             }
 
             foreach ($this->class->getProperties() as $property) {

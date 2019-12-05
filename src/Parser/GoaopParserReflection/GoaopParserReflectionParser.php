@@ -9,8 +9,6 @@ use Go\ParserReflection\ReflectionEngine;
 use Go\ParserReflection\ReflectionFile;
 use setasign\PhpStubGenerator\Reader\ReaderInterface;
 use setasign\PhpStubGenerator\Parser\ParserInterface;
-use setasign\PhpStubGenerator\Parser\ReflectionConst;
-use setasign\PhpStubGenerator\Parser\GoaopParserReflection\ReflectionConst as GoaopReflectionConst;
 
 class GoaopParserReflectionParser implements ParserInterface
 {
@@ -172,19 +170,5 @@ class GoaopParserReflectionParser implements ParserInterface
         $this->functions = $functions;
         $this->constants = $constants;
         $this->aliases = $aliases;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getConstantReflection(\ReflectionClass $reflectionClass, string $constantName): ?ReflectionConst
-    {
-        $reflectionConst = null;
-        try {
-            $reflectionConst = new GoaopReflectionConst($reflectionClass, $constantName);
-        } catch (\ReflectionException $e) {
-        }
-
-        return $reflectionConst;
     }
 }

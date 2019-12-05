@@ -14,13 +14,13 @@ class PropertyFormatterTest extends TestCase
         string $declaringClassName
     ): MockObject {
         $declaringClass = $this->getMockBuilder(\ReflectionClass::class)
-            ->setMethods(['getName'])
+            ->onlyMethods(['getName'])
             ->disableOriginalConstructor()
             ->getMock();
         $declaringClass->method('getName')->willReturn($declaringClassName);
 
         $property = $this->getMockBuilder(\ReflectionProperty::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getName',
                 'isDefault',
                 'getDeclaringClass',

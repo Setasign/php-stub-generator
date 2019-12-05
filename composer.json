@@ -11,16 +11,17 @@
     ],
 
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "ext-pcre": "*",
         "ext-mbstring": "*",
 
-        "goaop/parser-reflection": "^2.0",
+        "goaop/parser-reflection": "^2.1",
         "symfony/console": "^4.0"
     },
 
     "require-dev": {
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^8.0",
+        "php-defer/php-defer": "^4.0"
     },
 
     "autoload": {

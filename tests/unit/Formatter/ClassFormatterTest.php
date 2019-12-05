@@ -6,23 +6,15 @@ namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use setasign\PhpStubGenerator\Formatter\ClassFormatter;
-use setasign\PhpStubGenerator\Parser\ParserInterface;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ClassFormatterTest extends TestCase
 {
-    protected function createParserInterfaceMock(): ParserInterface
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getMockBuilder(ParserInterface::class)
-            ->getMockForAbstractClass();
-    }
-
     protected function createReflectionClassMock(): MockObject
     {
         return $this->getMockBuilder(\ReflectionClass::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getShortName',
                 'getName',
                 'getDocComment',
@@ -48,8 +40,6 @@ class ClassFormatterTest extends TestCase
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
 
-        $parser = $this->createParserInterfaceMock();
-
         $reflectionClass = $this->createReflectionClassMock();
         $reflectionClass->method('getShortName')->willReturn('TestClass');
         $reflectionClass->method('getName')->willReturn('vendor\library\TestStuff\TestClass');
@@ -69,7 +59,7 @@ class ClassFormatterTest extends TestCase
          * @var \ReflectionClass $reflectionClass
          */
 
-        $formatter = new ClassFormatter($parser, $reflectionClass);
+        $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = $t . 'class TestClass' . $n . $t . '{' . $n . $t . '}' . $n;
         $this->assertSame($expectedResult, $formatter->format(true));
     }
@@ -81,8 +71,6 @@ class ClassFormatterTest extends TestCase
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
 
         $reflectionClass = $this->createReflectionClassMock();
         $reflectionClass->method('getShortName')->willReturn('TestInterface');
@@ -103,7 +91,7 @@ class ClassFormatterTest extends TestCase
          * @var \ReflectionClass $reflectionClass
          */
 
-        $formatter = new ClassFormatter($parser, $reflectionClass);
+        $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = $t . 'interface TestInterface' . $n . $t . '{' . $n . $t . '}' . $n;
         $this->assertSame($expectedResult, $formatter->format(true));
     }
@@ -115,8 +103,6 @@ class ClassFormatterTest extends TestCase
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
 
         $reflectionClass = $this->createReflectionClassMock();
         $reflectionClass->method('getShortName')->willReturn('TestTrait');
@@ -137,7 +123,7 @@ class ClassFormatterTest extends TestCase
          * @var \ReflectionClass $reflectionClass
          */
 
-        $formatter = new ClassFormatter($parser, $reflectionClass);
+        $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = $t . 'trait TestTrait' . $n . $t . '{' . $n . $t . '}' . $n;
         $this->assertSame($expectedResult, $formatter->format(true));
     }
@@ -149,8 +135,6 @@ class ClassFormatterTest extends TestCase
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
 
         $reflectionClass = $this->createReflectionClassMock();
         $reflectionClass->method('getShortName')->willReturn('TestAbstract');
@@ -171,7 +155,7 @@ class ClassFormatterTest extends TestCase
          * @var \ReflectionClass $reflectionClass
          */
 
-        $formatter = new ClassFormatter($parser, $reflectionClass);
+        $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = $t . 'abstract class TestAbstract' . $n . $t . '{' . $n . $t . '}' . $n;
         $this->assertSame($expectedResult, $formatter->format(true));
     }
@@ -183,8 +167,6 @@ class ClassFormatterTest extends TestCase
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
 
         $reflectionClass = $this->createReflectionClassMock();
         $reflectionClass->method('getShortName')->willReturn('TestFinal');
@@ -205,7 +187,7 @@ class ClassFormatterTest extends TestCase
          * @var \ReflectionClass $reflectionClass
          */
 
-        $formatter = new ClassFormatter($parser, $reflectionClass);
+        $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = $t . 'final class TestFinal' . $n . $t . '{' . $n . $t . '}' . $n;
         $this->assertSame($expectedResult, $formatter->format(true));
     }
@@ -217,8 +199,6 @@ class ClassFormatterTest extends TestCase
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
 
         $interfaceFromParent = $this->createReflectionClassMock();
         $interfaceFromParent->method('getShortName')->willReturn('AnotherInterface');
@@ -330,7 +310,7 @@ EOT
          * @var \ReflectionClass $reflectionClass
          */
 
-        $formatter = new ClassFormatter($parser, $reflectionClass);
+        $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = ''
             . $t . '/**' . $n
             . $t . ' * This is a cool test document!' . $n
@@ -354,8 +334,6 @@ EOT
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
 
         $interfaceFromInterface = $this->createReflectionClassMock();
         $interfaceFromInterface->method('getShortName')->willReturn('SomeOtherInterface');
@@ -435,7 +413,7 @@ EOT
          * @var \ReflectionClass $reflectionClass
          */
 
-        $formatter = new ClassFormatter($parser, $reflectionClass);
+        $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = ''
             . $t . '/**' . $n
             . $t . ' * This is a cool test document!' . $n

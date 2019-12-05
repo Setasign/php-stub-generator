@@ -41,11 +41,4 @@ interface ParserInterface
      * @throws \InvalidArgumentException If the class or function is unknown.
      */
     public function getAliases(string $classOrFunctionName, string $type): array;
-
-    /**
-     * @param \ReflectionClass $reflectionClass
-     * @param string $constantName
-     * @return null|ReflectionConst
-     */
-    public function getConstantReflection(\ReflectionClass $reflectionClass, string $constantName): ?ReflectionConst;
 }

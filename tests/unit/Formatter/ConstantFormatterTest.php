@@ -6,35 +6,33 @@ namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use setasign\PhpStubGenerator\Formatter\ConstantFormatter;
-use setasign\PhpStubGenerator\Parser\ParserInterface;
-use setasign\PhpStubGenerator\Parser\ReflectionConst;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ConstantFormatterTest extends TestCase
 {
-    protected function createParserInterfaceMock(): MockObject
-    {
-        return $this->getMockBuilder(ParserInterface::class)
-            ->setMethods(['getConstantReflection'])
-            ->getMockForAbstractClass();
-    }
-
     protected function createReflectionConstMock(): MockObject
     {
-        return $this->getMockBuilder(ReflectionConst::class)
-            ->setMethods(['getDocComment'])
-            ->getMockForAbstractClass();
+        return $this->getMockBuilder(\ReflectionClassConstant::class)
+            ->onlyMethods([
+                'getDocComment',
+                'getName',
+                'getValue',
+                'getDeclaringClass',
+                'isPublic',
+                'isProtected',
+                'isPrivate'
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     protected function createReflectionClassMock(): MockObject
     {
         return $this->getMockBuilder(\ReflectionClass::class)
             ->disableOriginalConstructor()
-            ->setMethods([
-                'hasConstant',
-                'getConstant',
-                'getParentClass',
-                'getInterfaces'
+            ->onlyMethods([
+                'getName',
+                'getReflectionConstant',
             ])
             ->getMock();
     }
@@ -47,51 +45,26 @@ class ConstantFormatterTest extends TestCase
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
 
-        $parser = $this->createParserInterfaceMock();
         $class = $this->createReflectionClassMock();
         $const = $this->createReflectionConstMock();
 
-        $parser->method('getConstantReflection')->with($class, 'SUPER_CONSTANT')->willReturn($const);
+        $class->method('getName')->willReturn('TestClass');
+        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
-        $class->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getParentClass')->willThrowException(new \Exception('Unknown parent'));
-        $class->method('getInterfaces')->willReturn([]);
-
-        $const->method('getDocComment')->willReturn(null);
+        $const->method('getDocComment')->willReturn(false);
+        $const->method('getName')->willReturn('SUPER_CONSTANT');
+        $const->method('getValue')->willReturn(true);
+        $const->method('getDeclaringClass')->willReturn($class);
+        $const->method('isPublic')->willReturn(true);
+        $const->method('isProtected')->willReturn(false);
+        $const->method('isPrivate')->willReturn(false);
 
         /**
-         * @var ParserInterface $parser
          * @var \ReflectionClass $class
+         * @var \ReflectionClassConstant $const
          */
         $expectedOutput = $t . $t . 'const SUPER_CONSTANT = true;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testWithInvalidConstant(): void
-    {
-        $parser = $this->createParserInterfaceMock();
-        $class = $this->createReflectionClassMock();
-        $const = $this->createReflectionConstMock();
-
-        $parser->method('getConstantReflection')->with($class, 'SUPER_CONSTANT')->willReturn($const);
-
-        $class->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(false);
-        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getParentClass')->willThrowException(new \Exception('Unknown parent'));
-        $class->method('getInterfaces')->willReturn([]);
-
-        $const->method('getDocComment')->willReturn(null);
-
-        /**
-         * @var ParserInterface $parser
-         * @var \ReflectionClass $class
-         */
-        $expectedOutput = '';
-        $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
+        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
     }
 
     /**
@@ -99,125 +72,19 @@ class ConstantFormatterTest extends TestCase
      */
     public function testConstantFromParent(): void
     {
-        $parser = $this->createParserInterfaceMock();
-        $class = $this->createReflectionClassMock();
         $const = $this->createReflectionConstMock();
-
-        $parser->method('getConstantReflection')->with($class, 'SUPER_CONSTANT')->willReturn($const);
 
         $parentClass = $this->createReflectionClassMock();
-        $parentClass->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $parentClass->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
+        $parentClass->method('getName')->willReturn('ParentClass');
+        $parentClass->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
-        $class->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getParentClass')->willReturn($parentClass);
-        $class->method('getInterfaces')->willReturn([]);
-
-        $const->method('getDocComment')->willReturn(null);
+        $const->method('getDeclaringClass')->willReturn($parentClass);
 
         /**
-         * @var ParserInterface $parser
-         * @var \ReflectionClass $class
+         * @var \ReflectionClassConstant $const
          */
         $expectedOutput = '';
-        $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testConstantFromParentButChanged(): void
-    {
-        $n = PhpStubGenerator::$eol;
-        $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
-        $class = $this->createReflectionClassMock();
-        $const = $this->createReflectionConstMock();
-
-        $parser->method('getConstantReflection')->with($class, 'SUPER_CONSTANT')->willReturn($const);
-
-        $parentClass = $this->createReflectionClassMock();
-        $parentClass->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $parentClass->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-
-        $class->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn(false);
-        $class->method('getParentClass')->willReturn($parentClass);
-        $class->method('getInterfaces')->willReturn([]);
-
-        $const->method('getDocComment')->willReturn(null);
-
-        /**
-         * @var ParserInterface $parser
-         * @var \ReflectionClass $class
-         */
-        $expectedOutput = $t . $t . 'const SUPER_CONSTANT = false;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testConstantFromInterface(): void
-    {
-        $parser = $this->createParserInterfaceMock();
-        $class = $this->createReflectionClassMock();
-        $const = $this->createReflectionConstMock();
-
-        $parser->method('getConstantReflection')->with($class, 'SUPER_CONSTANT')->willReturn($const);
-
-        $interface = $this->createReflectionClassMock();
-        $interface->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $interface->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-
-        $class->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getParentClass')->willReturn(new \Exception('Unknown parent'));
-        $class->method('getInterfaces')->willReturn([$interface]);
-
-        $const->method('getDocComment')->willReturn(null);
-
-        /**
-         * @var ParserInterface $parser
-         * @var \ReflectionClass $class
-         */
-        $expectedOutput = '';
-        $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testConstantFromInterfaceButChanged(): void
-    {
-        $n = PhpStubGenerator::$eol;
-        $t = PhpStubGenerator::$tab;
-
-        $parser = $this->createParserInterfaceMock();
-        $class = $this->createReflectionClassMock();
-        $const = $this->createReflectionConstMock();
-
-        $parser->method('getConstantReflection')->with($class, 'SUPER_CONSTANT')->willReturn($const);
-
-        $interface = $this->createReflectionClassMock();
-        $interface->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $interface->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-
-        $class->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn(false);
-        $class->method('getParentClass')->willReturn(new \Exception('Unknown parent'));
-        $class->method('getInterfaces')->willReturn([$interface]);
-
-        $const->method('getDocComment')->willReturn(null);
-
-        /**
-         * @var ParserInterface $parser
-         * @var \ReflectionClass $class
-         */
-        $expectedOutput = $t . $t . 'const SUPER_CONSTANT = false;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
+        $this->assertSame($expectedOutput, (new ConstantFormatter('ImplementingClass', $const))->format());
     }
 
     /**
@@ -228,16 +95,11 @@ class ConstantFormatterTest extends TestCase
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
 
-        $parser = $this->createParserInterfaceMock();
         $class = $this->createReflectionClassMock();
         $const = $this->createReflectionConstMock();
 
-        $parser->method('getConstantReflection')->with($class, 'SUPER_CONSTANT')->willReturn($const);
-
-        $class->method('hasConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn(true);
-        $class->method('getParentClass')->willThrowException(new \Exception('Unknown parent'));
-        $class->method('getInterfaces')->willReturn([]);
+        $class->method('getName')->willReturn('TestClass');
+        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
         $const->method('getDocComment')->willReturn(<<<EOT
 /**
@@ -249,10 +111,15 @@ class ConstantFormatterTest extends TestCase
  */
 EOT
         );
+        $const->method('getName')->willReturn('SUPER_CONSTANT');
+        $const->method('getValue')->willReturn(true);
+        $const->method('getDeclaringClass')->willReturn($class);
+        $const->method('isPublic')->willReturn(true);
+        $const->method('isProtected')->willReturn(false);
+        $const->method('isPrivate')->willReturn(false);
 
         /**
-         * @var ParserInterface $parser
-         * @var \ReflectionClass $class
+         * @var \ReflectionClassConstant $const
          */
         $expectedOutput = $t . $t . '/**' . $n
             . $t . $t . ' * This is just a cool test case!' . $n
@@ -262,6 +129,99 @@ EOT
             . $t . $t . ' * @var bool' . $n
             . $t . $t . ' */' . $n
             . $t . $t . 'const SUPER_CONSTANT = true;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter($parser, $class, 'SUPER_CONSTANT'))->format());
+        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+    }
+
+    public function testPublicConstant(): void
+    {
+        PhpStubGenerator::$addClassConstantsVisibility = true;
+        \defer($_, function () {
+            PhpStubGenerator::$addClassConstantsVisibility = false;
+        });
+
+        $n = PhpStubGenerator::$eol;
+        $t = PhpStubGenerator::$tab;
+
+        $class = $this->createReflectionClassMock();
+        $const = $this->createReflectionConstMock();
+
+        $class->method('getName')->willReturn('TestClass');
+        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+
+        $const->method('getDocComment')->willReturn(false);
+        $const->method('getName')->willReturn('SUPER_CONSTANT');
+        $const->method('getValue')->willReturn(true);
+        $const->method('getDeclaringClass')->willReturn($class);
+        $const->method('isPublic')->willReturn(true);
+        $const->method('isProtected')->willReturn(false);
+        $const->method('isPrivate')->willReturn(false);
+
+        /**
+         * @var \ReflectionClassConstant $const
+         */
+        $expectedOutput = $t . $t . 'public const SUPER_CONSTANT = true;' . $n . $n;
+        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+    }
+
+    public function testProtectedConstant(): void
+    {
+        PhpStubGenerator::$addClassConstantsVisibility = true;
+        \defer($_, function () {
+            PhpStubGenerator::$addClassConstantsVisibility = false;
+        });
+
+        $n = PhpStubGenerator::$eol;
+        $t = PhpStubGenerator::$tab;
+
+        $class = $this->createReflectionClassMock();
+        $const = $this->createReflectionConstMock();
+
+        $class->method('getName')->willReturn('TestClass');
+        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+
+        $const->method('getDocComment')->willReturn(false);
+        $const->method('getName')->willReturn('SUPER_CONSTANT');
+        $const->method('getValue')->willReturn(true);
+        $const->method('getDeclaringClass')->willReturn($class);
+        $const->method('isPublic')->willReturn(false);
+        $const->method('isProtected')->willReturn(true);
+        $const->method('isPrivate')->willReturn(false);
+
+        /**
+         * @var \ReflectionClassConstant $const
+         */
+        $expectedOutput = $t . $t . 'protected const SUPER_CONSTANT = true;' . $n . $n;
+        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+    }
+
+    public function testPrivateConstant(): void
+    {
+        PhpStubGenerator::$addClassConstantsVisibility = true;
+        \defer($_, function () {
+            PhpStubGenerator::$addClassConstantsVisibility = false;
+        });
+
+        $n = PhpStubGenerator::$eol;
+        $t = PhpStubGenerator::$tab;
+
+        $class = $this->createReflectionClassMock();
+        $const = $this->createReflectionConstMock();
+
+        $class->method('getName')->willReturn('TestClass');
+        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+
+        $const->method('getDocComment')->willReturn(false);
+        $const->method('getName')->willReturn('SUPER_CONSTANT');
+        $const->method('getValue')->willReturn(true);
+        $const->method('getDeclaringClass')->willReturn($class);
+        $const->method('isPublic')->willReturn(false);
+        $const->method('isProtected')->willReturn(false);
+        $const->method('isPrivate')->willReturn(true);
+
+        /**
+         * @var \ReflectionClassConstant $const
+         */
+        $expectedOutput = $t . $t . 'private const SUPER_CONSTANT = true;' . $n . $n;
+        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
     }
 }

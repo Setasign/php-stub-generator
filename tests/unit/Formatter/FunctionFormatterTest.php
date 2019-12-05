@@ -12,7 +12,7 @@ class FunctionFormatterTest extends TestCase
     protected function createReflectionTypeMock(string $name, bool $allowsNull = false): \ReflectionType
     {
         $result = $this->getMockBuilder(\ReflectionType::class)
-            ->setMethods(['allowsNull', '__toString'])
+            ->onlyMethods(['allowsNull', '__toString'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -33,7 +33,7 @@ class FunctionFormatterTest extends TestCase
         bool $isPassedByReference
     ): \ReflectionParameter {
         $result = $this->getMockBuilder(\ReflectionParameter::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getName',
                 'getType',
                 'isDefaultValueAvailable',
@@ -78,7 +78,7 @@ class FunctionFormatterTest extends TestCase
         ?string $doc
     ): \ReflectionFunction {
         $result = $this->getMockBuilder(\ReflectionFunction::class)
-            ->setMethods([
+            ->onlyMethods([
                 'getName',
                 'getParameters',
                 'hasReturnType',
@@ -98,6 +98,7 @@ class FunctionFormatterTest extends TestCase
             $result->method('getReturnType')->willThrowException(new \Exception('Can\'t resolve return type'));
         }
 
+        /** @noinspection ProperNullCoalescingOperatorUsageInspection */
         $result->method('getDocComment')->willReturn($doc ?? false);
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */

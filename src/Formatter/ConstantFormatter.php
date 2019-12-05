@@ -3,41 +3,31 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Formatter;
 
-use ReflectionClass;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
-use setasign\PhpStubGenerator\Parser\ParserInterface;
-use setasign\PhpStubGenerator\Parser\ReflectionConst;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ConstantFormatter
 {
     /**
-     * @var ParserInterface
-     */
-    private $parser;
-
-    /**
-     * @var ReflectionClass
-     */
-    private $class;
-
-    /**
      * @var string
      */
-    private $constantName;
+    private $className;
+
+    /**
+     * @var \ReflectionClassConstant
+     */
+    private $reflectionClassConstant;
 
     /**
      * ConstantFormatter constructor.
      *
-     * @param ParserInterface $parser
-     * @param ReflectionClass $class
-     * @param string $constantName
+     * @param string $className
+     * @param \ReflectionClassConstant $reflectionClassConstant
      */
-    public function __construct(ParserInterface $parser, ReflectionClass $class, string $constantName)
+    public function __construct(string $className, \ReflectionClassConstant $reflectionClassConstant)
     {
-        $this->parser = $parser;
-        $this->class = $class;
-        $this->constantName = $constantName;
+        $this->className = $className;
+        $this->reflectionClassConstant = $reflectionClassConstant;
     }
 
     /**
@@ -47,50 +37,33 @@ class ConstantFormatter
     {
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
-        if (!$this->class->hasConstant($this->constantName)) {
+
+        if ($this->reflectionClassConstant->getDeclaringClass()->getName() !== $this->className) {
             return '';
         }
-
-        $parentClass = null;
-        try {
-            $parentClass = $this->class->getParentClass();
-        } catch (\Throwable $e) {
-        }
-        $value = $this->class->getConstant($this->constantName);
-
-        if ($parentClass instanceof ReflectionClass && $parentClass->hasConstant($this->constantName)
-            && $parentClass->getConstant($this->constantName) === $value
-        ) {
-            return '';
-        }
-
-        $isDeclaredInInterface = false;
-        foreach ($this->class->getInterfaces() as $interface) {
-            if ($interface->hasConstant($this->constantName)
-                && $interface->getConstant($this->constantName) === $value
-            ) {
-                $isDeclaredInInterface = true;
-                continue;
-            }
-        }
-
-        if ($isDeclaredInInterface) {
-            return '';
-        }
-
-        $reflectionConst = $this->parser->getConstantReflection($this->class, $this->constantName);
+        $value = $this->reflectionClassConstant->getValue();
 
         $result = '';
-        if ($reflectionConst instanceof ReflectionConst) {
-            $docComment = $reflectionConst->getDocComment();
-            if (\is_string($docComment)) {
-                $result .= FormatHelper::indentDocBlock($docComment, 2, $t) . $n;
+        $docComment = $this->reflectionClassConstant->getDocComment();
+        if (\is_string($docComment)) {
+            $result .= FormatHelper::indentDocBlock($docComment, 2, $t) . $n;
+        }
+
+        $visibility = '';
+        if (PhpStubGenerator::$addClassConstantsVisibility) {
+            if ($this->reflectionClassConstant->isPublic()) {
+                $visibility = 'public ';
+            } elseif ($this->reflectionClassConstant->isProtected()) {
+                $visibility = 'protected ';
+            } elseif ($this->reflectionClassConstant->isPrivate()) {
+                $visibility = 'private ';
             }
         }
 
         $value = FormatHelper::formatValue($value);
         $result .= $t . $t
-            . 'const ' . $this->constantName . ' = ' . $value . ';'
+            . $visibility
+            . 'const ' . $this->reflectionClassConstant->getName() . ' = ' . $value . ';'
             . $n . $n;
 
         return $result;
