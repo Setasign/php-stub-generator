@@ -10,11 +10,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-if (version_compare('7.1.0', PHP_VERSION, '>=')) {
+if (version_compare('7.2', PHP_VERSION, '>=')) {
     fwrite(
         STDERR,
         sprintf(
-            'This version of php-stub-generator is supported on PHP 7.1.' . PHP_EOL .
+            'This version of php-stub-generator is supported on PHP 7.2.' . PHP_EOL .
             'You are using PHP %s (%s).' . PHP_EOL,
             PHP_VERSION,
             PHP_BINARY
@@ -69,6 +69,12 @@ require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
         InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
         'Exclude any directories'
     )
+    ->addOption(
+        'addClassConstantsVisibility',
+        false,
+        InputOption::VALUE_NONE,
+        'If enabled all generated class constants get a visibility (the generated stubs require PHP >= 7.1)'
+    )
     ->setCode(function (
         InputInterface $input,
         OutputInterface $output
@@ -76,9 +82,14 @@ require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
         $sourceDirectory = $input->getArgument('source');
         $outputPath = $input->getArgument('output');
         $excludes = $input->getOption('exclude');
+        $addClassConstantsVisibility = $input->getOption('addClassConstantsVisibility');
 
         if (!is_dir($sourceDirectory)) {
             throw new \InvalidArgumentException('Invalid source directory!');
+        }
+
+        if ($addClassConstantsVisibility) {
+            PhpStubGenerator::$addClassConstantsVisibility = true;
         }
 
         $generator = new PhpStubGenerator();

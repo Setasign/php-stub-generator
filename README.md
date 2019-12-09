@@ -6,7 +6,7 @@ completion for your IDE when encrypting your library with e.g.
 [the ioncube encoder](http://www.ioncube.com/php_encoder.php).
 
 [![Build Status](https://travis-ci.org/Setasign/php-stub-generator.svg?branch=master)](https://travis-ci.org/Setasign/php-stub-generator)
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/packagist/l/setasign/php-stub-generator.svg)](https://packagist.org/packages/setasign/php-stub-generator)
 
 ## Installation
@@ -44,7 +44,39 @@ file_put_contents(__DIR__ . '/setapdf-core-stub.php', $output);
 Alternatively you could just call the cli helper.
 
 ```bash
-vendor/bin/php-stub-generator generate vendor/setasign/setapdf-core/library setapdf-core-stub.php
+vendor/bin/php-stub-generator generate setapdf-core/library setapdf-core-stub.php
+```
+
+## Settings
+The PhpStubGenerator class has following settings:
+```php
+class PhpStubGenerator
+{
+    /**
+     * End of line character(s).
+     *
+     * Doesn't change the used EOL character(s) of doc blocks.
+     *
+     * @var string
+     */
+    public static $eol = "\n";
+
+    /**
+     * Tab character(s)
+     *
+     * @var string
+     */
+    public static $tab = '    ';
+
+    /**
+     * If enabled all generated class constants get a visibility (the generated stubs require PHP >= 7.1)
+     * 
+     * Within the cli tool can be set with the option "--addClassConstantsVisibility"
+     * 
+     * @var bool
+     */
+    public static $addClassConstantsVisibility = false;
+}
 ```
 
 ## Drawbacks / TODOs
@@ -53,4 +85,3 @@ vendor/bin/php-stub-generator generate vendor/setasign/setapdf-core/library seta
   Additionally the "declaring class" of imported trait methods is the importing class and not like expected the trait.
 - Calculated constants or constants that use other constants like \_\_DIR\_\_ will be filled with the values of the 
   runtime environment.
-- At the moment we only support public class constants due to missing support of ReflectionClassConstant in [goaop/parser-reflection](https://github.com/goaop/parser-reflection).

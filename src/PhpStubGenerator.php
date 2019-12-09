@@ -14,16 +14,26 @@ use setasign\PhpStubGenerator\Reader\ReaderInterface;
 class PhpStubGenerator
 {
     /**
+     * End of line character(s).
+     *
+     * Doesn't change the used EOL character(s) of doc blocks.
+     *
      * @var string
      */
     public static $eol = "\n";
 
     /**
+     * Tab character(s)
+     *
      * @var string
      */
     public static $tab = '    ';
 
     /**
+     * If enabled all generated class constants get a visibility (the generated stubs require PHP >= 7.1).
+     *
+     * Within the cli tool can be set with the option "--addClassConstantsVisibility"
+     *
      * @var bool
      */
     public static $addClassConstantsVisibility = false;
