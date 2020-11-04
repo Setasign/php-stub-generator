@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Parser\GoaopParserReflection;
@@ -135,9 +136,6 @@ class GoaopParserReflectionParser implements ParserInterface
             return $file->getFileNamespaces();
         }, $files);
 
-        /**
-         * @var array $classes
-         */
         $classes = [];
         $functions = [];
         $constants = [];

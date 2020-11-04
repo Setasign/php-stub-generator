@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator;
@@ -81,11 +82,10 @@ class PhpStubGenerator
 
         $parser = $this->getParser();
         $parser->parse();
+        /**
+         * @var ReflectionClass[] $classes
+         */
         foreach ($parser->getClasses() as $namespace => $classes) {
-            /**
-             * @var ReflectionClass[] $classes
-             */
-
             foreach ($classes as $class) {
                 $isGlobalNamespace = $namespace === '';
                 $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
@@ -99,10 +99,10 @@ class PhpStubGenerator
             }
         }
 
+        /**
+         * @var ReflectionFunction[] $functions
+         */
         foreach ($parser->getFunctions() as $namespace => $functions) {
-            /**
-             * @var ReflectionFunction[] $functions
-             */
             foreach ($functions as $function) {
                 $isGlobalNamespace = ($namespace === '');
                 $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n

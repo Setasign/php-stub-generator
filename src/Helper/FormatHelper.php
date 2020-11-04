@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Helper;
@@ -14,7 +15,7 @@ class FormatHelper
     public static function indentDocBlock(string $block, int $tabCount, string $tabChar): string
     {
         $tab = \str_repeat($tabChar, $tabCount);
-        
+
         return $tab . \preg_replace("/\r?\n( |\t)*/", "\n" . $tab .  ' ', $block);
     }
 

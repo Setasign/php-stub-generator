@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Formatter;
@@ -85,7 +86,8 @@ class ClassFormatter
                  * @var ReflectionClass $compareInterface
                  */
                 // if the $compareInterface is a default php interface it cannot use an user defined interface
-                if ((!$compareInterface->isUserDefined() && $interface->isUserDefined())
+                if (
+                    (!$compareInterface->isUserDefined() && $interface->isUserDefined())
                     || $compareInterface->implementsInterface($interfaceName)
                 ) {
                     return false;

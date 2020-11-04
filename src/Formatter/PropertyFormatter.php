@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Formatter;
@@ -29,7 +30,7 @@ class PropertyFormatter
      *
      * @param string $className
      * @param ReflectionProperty $property
-     * @param $defaultValue
+     * @param mixed $defaultValue
      */
     public function __construct(string $className, ReflectionProperty $property, $defaultValue)
     {
@@ -46,7 +47,8 @@ class PropertyFormatter
         $n = PhpStubGenerator::$eol;
         $t = PhpStubGenerator::$tab;
 
-        if (!$this->property->isDefault()
+        if (
+            !$this->property->isDefault()
             || $this->property->getDeclaringClass()->getName() !== $this->className
         ) {
             return '';
