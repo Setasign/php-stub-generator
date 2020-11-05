@@ -51,7 +51,7 @@ if (!defined('PHP_STUB_GENERATOR_COMPOSER_INSTALL')) {
 require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
 
 /** @noinspection PhpUnhandledExceptionInspection */
-(new Application('setasign php-stub-generator', 'v1.0.0'))
+(new Application('setasign php-stub-generator', 'v1.0.0-dev'))
 ->register('generate')
     ->setDescription('Build the stub-file')
     ->addArgument(
