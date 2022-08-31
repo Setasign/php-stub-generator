@@ -5,7 +5,7 @@ The main purpose for this tool is to generate stub-files from php classes to hav
 completion for your IDE when encrypting your library with e.g. 
 [the ioncube encoder](http://www.ioncube.com/php_encoder.php).
 
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%207.3-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/packagist/l/setasign/php-stub-generator.svg)](https://packagist.org/packages/setasign/php-stub-generator)
 
 ## Installation
