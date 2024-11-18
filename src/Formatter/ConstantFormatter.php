@@ -9,15 +9,9 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ConstantFormatter
 {
-    /**
-     * @var string
-     */
-    private $className;
+    private string $className;
 
-    /**
-     * @var \ReflectionClassConstant
-     */
-    private $reflectionClassConstant;
+    private \ReflectionClassConstant $reflectionClassConstant;
 
     /**
      * ConstantFormatter constructor.

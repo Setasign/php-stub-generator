@@ -13,10 +13,7 @@ class FunctionFormatter
 {
     public const DEFAULT_TYPES = ['int', 'float', 'bool', 'string', 'self', 'callable', 'array', 'object'];
 
-    /**
-     * @var ReflectionFunctionAbstract
-     */
-    protected $function;
+    protected ReflectionFunctionAbstract $function;
 
     /**
      * FunctionFormatter constructor.

@@ -16,27 +16,27 @@ class GoaopParserReflectionParser implements ParserInterface
     /**
      * @var ReaderInterface[]
      */
-    private $sources;
+    private array $sources;
 
     /**
      * @var null|array
      */
-    private $classes;
+    private ?array $classes = null;
 
     /**
      * @var null|array
      */
-    private $functions;
+    private ?array $functions = null;
 
     /**
      * @var null|array
      */
-    private $constants;
+    private ?array $constants = null;
 
     /**
      * @var null|array
      */
-    private $aliases;
+    private ?array $aliases = null;
 
     /**
      * GoaopParserReflectionParser constructor.

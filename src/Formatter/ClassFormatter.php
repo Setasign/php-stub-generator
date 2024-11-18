@@ -10,10 +10,7 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ClassFormatter
 {
-    /**
-     * @var ReflectionClass
-     */
-    private $class;
+    private ReflectionClass $class;
 
     /**
      * ClassFormatter constructor.

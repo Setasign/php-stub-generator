@@ -6,15 +6,12 @@ namespace setasign\PhpStubGenerator\Reader;
 
 class AllFiles implements ReaderInterface
 {
-    /**
-     * @var string
-     */
-    protected $path;
+    protected string $path;
 
     /**
      * @var string[]
      */
-    protected $excludes;
+    protected array $excludes;
 
     public function __construct(string $path, array $excludes = [])
     {
