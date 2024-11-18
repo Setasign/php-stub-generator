@@ -8,7 +8,7 @@ use Go\ParserReflection\LocatorInterface;
 
 class ClassListLocator implements LocatorInterface
 {
-    private $classMap;
+    private array $classMap;
 
     /**
      * ClassListLocator constructor.

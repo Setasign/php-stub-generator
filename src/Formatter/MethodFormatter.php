@@ -16,15 +16,9 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
  */
 class MethodFormatter extends FunctionFormatter
 {
-    /**
-     * @var string
-     */
-    private $className;
+    private string $className;
 
-    /**
-     * @var bool
-     */
-    private $classIsInterface;
+    private bool $classIsInterface;
 
     /**
      * MethodFormatter constructor.

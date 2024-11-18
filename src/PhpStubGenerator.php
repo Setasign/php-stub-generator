@@ -21,14 +21,14 @@ class PhpStubGenerator
      *
      * @var string
      */
-    public static $eol = "\n";
+    public static string $eol = "\n";
 
     /**
      * Tab character(s)
      *
      * @var string
      */
-    public static $tab = '    ';
+    public static string $tab = '    ';
 
     /**
      * If enabled all generated class constants get a visibility (the generated stubs require PHP >= 7.1).
@@ -37,12 +37,12 @@ class PhpStubGenerator
      *
      * @var bool
      */
-    public static $addClassConstantsVisibility = false;
+    public static bool $addClassConstantsVisibility = false;
 
     /**
      * @var ReaderInterface[]
      */
-    private $sources = [];
+    private array $sources = [];
 
     /**
      * @param string $name
@@ -130,14 +130,7 @@ class PhpStubGenerator
 
         $result = '';
         foreach ($aliases as $fullName => $alias) {
-            // todo: can be removed when this pull request is confirmed and tagged
-            // https://github.com/goaop/parser-reflection/pull/96
-            if ($alias === null) {
-                \preg_match('~\\\\?(?P<last>[^\\\\]+)$~', $fullName, $matches);
-                $alias = $matches['last'] ?? $fullName;
-            } else {
-                $alias = (string) $alias;
-            }
+            $alias = (string) $alias;
 
             $result .= $t . 'use ' . $fullName;
             if ($alias !== \substr($fullName, -\strlen($alias))) {

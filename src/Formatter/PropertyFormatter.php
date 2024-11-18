@@ -10,15 +10,9 @@ use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class PropertyFormatter
 {
-    /**
-     * @var string
-     */
-    protected $className;
+    protected string $className;
 
-    /**
-     * @var ReflectionProperty
-     */
-    protected $property;
+    protected ReflectionProperty $property;
 
     /**
      * @var mixed
