@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionFunction;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionType;
 use setasign\PhpStubGenerator\Formatter\FunctionFormatter;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class FunctionFormatterTest extends TestCase
 {
-    protected function createReflectionTypeMock(string $name, bool $allowsNull = false): \ReflectionType
+    protected function createReflectionTypeMock(string $name, bool $allowsNull = false): ReflectionNamedType
     {
-        $result = $this->getMockBuilder(\ReflectionType::class)
+        $result = $this->getMockBuilder(ReflectionNamedType::class)
             ->onlyMethods(['allowsNull', '__toString'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -20,20 +24,19 @@ class FunctionFormatterTest extends TestCase
         $result->method('allowsNull')->willReturn($allowsNull);
         $result->method('__toString')->willReturn($name);
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
     }
 
     protected function createReflectionParameterMock(
         string $name,
-        ?\ReflectionType $type,
+        ?ReflectionType $type,
         bool $hasDefault,
-        ?string $defaultConstant,
+        string $defaultConstant,
         $defaultValue,
         bool $isVariadic,
         bool $isPassedByReference
-    ): \ReflectionParameter {
-        $result = $this->getMockBuilder(\ReflectionParameter::class)
+    ): ReflectionParameter {
+        $result = $this->getMockBuilder(ReflectionParameter::class)
             ->onlyMethods([
                 'getName',
                 'getType',
@@ -51,7 +54,7 @@ class FunctionFormatterTest extends TestCase
         $result->method('getType')->willReturn($type);
         $result->method('isDefaultValueAvailable')->willReturn($hasDefault);
         if ($hasDefault) {
-            $result->method('isDefaultValueConstant')->willReturn($defaultConstant !== null);
+            $result->method('isDefaultValueConstant')->willReturn($defaultConstant !== '');
             $result->method('getDefaultValueConstantName')->willReturn($defaultConstant);
             $result->method('getDefaultValue')->willReturn($defaultValue);
         } else {
@@ -68,17 +71,16 @@ class FunctionFormatterTest extends TestCase
         $result->method('isVariadic')->willReturn($isVariadic);
         $result->method('isPassedByReference')->willReturn($isPassedByReference);
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
     }
 
     protected function createReflectionFunctionMock(
         string $name,
         array $parameters,
-        ?\ReflectionType $returnType,
+        ?ReflectionType $returnType,
         ?string $doc
-    ): \ReflectionFunction {
-        $result = $this->getMockBuilder(\ReflectionFunction::class)
+    ): ReflectionFunction {
+        $result = $this->getMockBuilder(ReflectionFunction::class)
             ->onlyMethods([
                 'getName',
                 'getParameters',
@@ -102,7 +104,6 @@ class FunctionFormatterTest extends TestCase
         /** @noinspection ProperNullCoalescingOperatorUsageInspection */
         $result->method('getDocComment')->willReturn($doc ?? false);
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
     }
 
@@ -162,7 +163,7 @@ class FunctionFormatterTest extends TestCase
             'a',
             $this->createReflectionTypeMock('stdClass'),
             false,
-            null,
+            '',
             null,
             false,
             false
@@ -172,7 +173,7 @@ class FunctionFormatterTest extends TestCase
             'b',
             $this->createReflectionTypeMock('int', true),
             false,
-            null,
+            '',
             null,
             false,
             false
@@ -192,7 +193,7 @@ class FunctionFormatterTest extends TestCase
             'd',
             null,
             true,
-            null,
+            '',
             123,
             false,
             false
@@ -215,7 +216,7 @@ class FunctionFormatterTest extends TestCase
             'a',
             $this->createReflectionTypeMock('int'),
             false,
-            null,
+            '',
             null,
             false,
             false
@@ -225,7 +226,7 @@ class FunctionFormatterTest extends TestCase
             'b',
             null,
             false,
-            null,
+            '',
             null,
             true,
             false
@@ -248,7 +249,7 @@ class FunctionFormatterTest extends TestCase
             'a',
             $this->createReflectionTypeMock('int'),
             false,
-            null,
+            '',
             null,
             false,
             true
@@ -258,7 +259,7 @@ class FunctionFormatterTest extends TestCase
             'b',
             null,
             false,
-            null,
+            '',
             null,
             false,
             true
@@ -281,7 +282,7 @@ class FunctionFormatterTest extends TestCase
             'a',
             $this->createReflectionTypeMock('int'),
             false,
-            null,
+            '',
             null,
             false,
             false
@@ -291,7 +292,7 @@ class FunctionFormatterTest extends TestCase
             'b',
             null,
             false,
-            null,
+            '',
             null,
             true,
             true

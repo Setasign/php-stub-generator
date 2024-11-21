@@ -11,16 +11,19 @@
     ],
 
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.2",
         "ext-pcre": "*",
         "ext-mbstring": "*",
 
-        "goaop/parser-reflection": "^2.1",
-        "symfony/console": "^4.0"
+        "roave/better-reflection": "^6.42",
+        "symfony/console": "^6.0"
     },
 
     "require-dev": {
-        "bamarni/composer-bin-plugin": "^1.8"
+        "bamarni/composer-bin-plugin": "^1.8",
+
+        "phpunit/phpunit": "^11.0",
+        "php-defer/php-defer": "^5.0"
     },
 
     "autoload": {

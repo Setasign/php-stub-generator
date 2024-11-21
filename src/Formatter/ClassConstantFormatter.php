@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Formatter;
 
+use ReflectionClassConstant;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
-class ConstantFormatter
+class ClassConstantFormatter
 {
     private string $className;
 
-    private \ReflectionClassConstant $reflectionClassConstant;
+    private ReflectionClassConstant $reflectionClassConstant;
 
-    /**
-     * ConstantFormatter constructor.
-     *
-     * @param string $className
-     * @param \ReflectionClassConstant $reflectionClassConstant
-     */
-    public function __construct(string $className, \ReflectionClassConstant $reflectionClassConstant)
+    public function __construct(string $className, ReflectionClassConstant $reflectionClassConstant)
     {
         $this->className = $className;
         $this->reflectionClassConstant = $reflectionClassConstant;

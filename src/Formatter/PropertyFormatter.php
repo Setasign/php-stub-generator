@@ -17,7 +17,7 @@ class PropertyFormatter
     /**
      * @var mixed
      */
-    protected $defaultValue;
+    protected mixed $defaultValue;
 
     /**
      * PropertyFormatter constructor.
@@ -26,7 +26,7 @@ class PropertyFormatter
      * @param ReflectionProperty $property
      * @param mixed $defaultValue
      */
-    public function __construct(string $className, ReflectionProperty $property, $defaultValue)
+    public function __construct(string $className, ReflectionProperty $property, mixed $defaultValue)
     {
         $this->className = $className;
         $this->property = $property;

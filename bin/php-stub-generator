@@ -5,34 +5,23 @@ declare(strict_types=1);
 
 use setasign\PhpStubGenerator\PhpStubGenerator;
 use setasign\PhpStubGenerator\Reader\AllFiles;
+use setasign\PhpStubGenerator\Reader\SingleFile;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-if (version_compare('7.2', PHP_VERSION, '>=')) {
-    fwrite(
-        STDERR,
-        sprintf(
-            'This version of php-stub-generator is supported on PHP 7.2.' . PHP_EOL .
-            'You are using PHP %s (%s).' . PHP_EOL,
-            PHP_VERSION,
-            PHP_BINARY
-        )
-    );
-
-    die(1);
-}
-
 if (!ini_get('date.timezone')) {
     ini_set('date.timezone', 'UTC');
 }
 
-foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
-    if (file_exists($file)) {
-        define('PHP_STUB_GENERATOR_COMPOSER_INSTALL', $file);
-        break;
+if (!defined('PHP_STUB_GENERATOR_COMPOSER_INSTALL')) {
+    foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
+        if (file_exists($file)) {
+            define('PHP_STUB_GENERATOR_COMPOSER_INSTALL', $file);
+            break;
+        }
     }
 }
 
@@ -47,22 +36,15 @@ if (!defined('PHP_STUB_GENERATOR_COMPOSER_INSTALL')) {
     die(1);
 }
 
-/** @noinspection PhpIncludeInspection */
 require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
 
-/** @noinspection PhpUnhandledExceptionInspection */
-(new Application('setasign php-stub-generator', 'v1.0.0-dev'))
+(new Application('setasign php-stub-generator', 'v2.0.0'))
 ->register('generate')
     ->setDescription('Build the stub-file')
     ->addArgument(
         'source',
         InputArgument::REQUIRED,
         'The root directory of your library'
-    )
-    ->addArgument(
-        'output',
-        InputArgument::REQUIRED,
-        'The output file'
     )
     ->addOption(
         'exclude',
@@ -71,15 +53,34 @@ require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
         'Exclude any directories'
     )
     ->addOption(
+        'resolvingSource',
+        null,
+        InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
+        'Additional directory to resolve dependencies but without generating own stubs'
+    )
+    ->addArgument(
+        'output',
+        InputArgument::REQUIRED,
+        'The output file'
+    )
+    ->addOption(
         'addClassConstantsVisibility',
-        false,
+        null,
         InputOption::VALUE_NONE,
         'If enabled all generated class constants get a visibility (the generated stubs require PHP >= 7.1)'
+    )
+    ->addOption(
+        'includeStringable',
+        null,
+        InputOption::VALUE_NONE,
+        'If enabled the interface \Stringable won\'t be filtered out (the generated stubs require PHP >= 8.0)'
     )
     ->setCode(function (
         InputInterface $input,
         OutputInterface $output
     ) {
+        gc_disable();
+//        $start = microtime(true);
         $sourceDirectory = $input->getArgument('source');
         $outputPath = $input->getArgument('output');
         $excludes = $input->getOption('exclude');
@@ -94,13 +95,39 @@ require PHP_STUB_GENERATOR_COMPOSER_INSTALL;
         }
 
         $generator = new PhpStubGenerator();
-        $generator->addSource(
-            'setapdf-core',
-            new AllFiles($sourceDirectory, $excludes)
-        );
+        if (is_file($sourceDirectory)) {
+            $generator->addSource(
+                'source',
+                new SingleFile($sourceDirectory)
+            );
+        } else {
+            $generator->addSource(
+                'source',
+                new AllFiles($sourceDirectory, $excludes)
+            );
+        }
+
+        $additionalSources = $input->getOption('resolvingSource');
+        if (is_array($additionalSources)) {
+            foreach ($additionalSources as $k => $source) {
+                if (is_file($source)) {
+                    $generator->addResolvingSource(
+                        'rs' . $k,
+                        new SingleFile($source)
+                    );
+                } else {
+                    $generator->addResolvingSource(
+                        'rs' . $k,
+                        new AllFiles($source)
+                    );
+                }
+            }
+        }
+
         $stubs = $generator->generate();
         file_put_contents($outputPath, $stubs, LOCK_EX);
         $output->write('The stubs were successfully generated to: ' . realpath($outputPath) . PHP_EOL);
+//        $output->write('Time: ' . microtime(true) - $start . PHP_EOL);
     })
 ->getApplication()
 ->run();
