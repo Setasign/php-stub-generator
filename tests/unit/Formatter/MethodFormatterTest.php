@@ -92,6 +92,7 @@ class MethodFormatterTest extends TestCase
                 'hasReturnType',
                 'getReturnType',
                 'getDocComment',
+                'getAttributes',
                 'isAbstract',
                 'isFinal',
                 'isPublic',
@@ -134,6 +135,7 @@ class MethodFormatterTest extends TestCase
 
         /** @noinspection ProperNullCoalescingOperatorUsageInspection */
         $result->method('getDocComment')->willReturn($doc ?? false);
+        $result->method('getAttributes')->willReturn([]);
 
         return $result;
     }

@@ -20,6 +20,7 @@ class ClassFormatterTest extends TestCase
                 'getShortName',
                 'getName',
                 'getDocComment',
+                'getAttributes',
                 'isInterface',
                 'isTrait',
                 'isAbstract',
@@ -46,6 +47,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('getShortName')->willReturn('TestClass');
         $reflectionClass->method('getName')->willReturn('vendor\library\TestStuff\TestClass');
         $reflectionClass->method('getDocComment')->willReturn(false);
+        $reflectionClass->method('getAttributes')->willReturn([]);
         $reflectionClass->method('isInterface')->willReturn(false);
         $reflectionClass->method('isTrait')->willReturn(false);
         $reflectionClass->method('isAbstract')->willReturn(false);
@@ -77,6 +79,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('getShortName')->willReturn('TestInterface');
         $reflectionClass->method('getName')->willReturn('vendor\library\TestStuff\TestInterface');
         $reflectionClass->method('getDocComment')->willReturn(false);
+        $reflectionClass->method('getAttributes')->willReturn([]);
         $reflectionClass->method('isInterface')->willReturn(true);
         $reflectionClass->method('isTrait')->willReturn(false);
         $reflectionClass->method('isAbstract')->willReturn(false);
@@ -109,6 +112,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('getShortName')->willReturn('TestTrait');
         $reflectionClass->method('getName')->willReturn('vendor\library\TestStuff\TestTrait');
         $reflectionClass->method('getDocComment')->willReturn(false);
+        $reflectionClass->method('getAttributes')->willReturn([]);
         $reflectionClass->method('isInterface')->willReturn(false);
         $reflectionClass->method('isTrait')->willReturn(true);
         $reflectionClass->method('isAbstract')->willReturn(false);
@@ -141,6 +145,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('getShortName')->willReturn('TestAbstract');
         $reflectionClass->method('getName')->willReturn('vendor\library\TestStuff\TestAbstract');
         $reflectionClass->method('getDocComment')->willReturn(false);
+        $reflectionClass->method('getAttributes')->willReturn([]);
         $reflectionClass->method('isInterface')->willReturn(false);
         $reflectionClass->method('isTrait')->willReturn(false);
         $reflectionClass->method('isAbstract')->willReturn(true);
@@ -173,6 +178,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('getShortName')->willReturn('TestFinal');
         $reflectionClass->method('getName')->willReturn('vendor\library\TestStuff\TestFinal');
         $reflectionClass->method('getDocComment')->willReturn(false);
+        $reflectionClass->method('getAttributes')->willReturn([]);
         $reflectionClass->method('isInterface')->willReturn(false);
         $reflectionClass->method('isTrait')->willReturn(false);
         $reflectionClass->method('isAbstract')->willReturn(false);
@@ -205,6 +211,7 @@ class ClassFormatterTest extends TestCase
         $interfaceFromParent->method('getShortName')->willReturn('AnotherInterface');
         $interfaceFromParent->method('getName')->willReturn('vendor\library\TestStuff\AnotherInterface');
         $interfaceFromParent->method('getDocComment')->willReturn(false);
+        $interfaceFromParent->method('getAttributes')->willReturn([]);
         $interfaceFromParent->method('isInterface')->willReturn(true);
         $interfaceFromParent->method('isTrait')->willReturn(false);
         $interfaceFromParent->method('isAbstract')->willReturn(false);
@@ -220,6 +227,7 @@ class ClassFormatterTest extends TestCase
         $parent->method('getShortName')->willReturn('AnotherClass');
         $parent->method('getName')->willReturn('vendor\library\TestStuff\AnotherClass');
         $parent->method('getDocComment')->willReturn(false);
+        $parent->method('getAttributes')->willReturn([]);
         $parent->method('isInterface')->willReturn(false);
         $parent->method('isTrait')->willReturn(false);
         $parent->method('isAbstract')->willReturn(false);
@@ -237,6 +245,7 @@ class ClassFormatterTest extends TestCase
         $interfaceFromInterface->method('getShortName')->willReturn('SomeOtherInterface');
         $interfaceFromInterface->method('getName')->willReturn('vendor\library\TestStuff\SomeOtherInterface');
         $interfaceFromInterface->method('getDocComment')->willReturn(false);
+        $interfaceFromInterface->method('getAttributes')->willReturn([]);
         $interfaceFromInterface->method('isInterface')->willReturn(true);
         $interfaceFromInterface->method('isTrait')->willReturn(false);
         $interfaceFromInterface->method('isAbstract')->willReturn(false);
@@ -252,6 +261,7 @@ class ClassFormatterTest extends TestCase
         $interfaceA->method('getShortName')->willReturn('InterfaceA');
         $interfaceA->method('getName')->willReturn('vendor\library\TestStuff\InterfaceA');
         $interfaceA->method('getDocComment')->willReturn(false);
+        $interfaceA->method('getAttributes')->willReturn([]);
         $interfaceA->method('isInterface')->willReturn(true);
         $interfaceA->method('isTrait')->willReturn(false);
         $interfaceA->method('isAbstract')->willReturn(false);
@@ -269,6 +279,7 @@ class ClassFormatterTest extends TestCase
         $interfaceB->method('getShortName')->willReturn('InterfaceB');
         $interfaceB->method('getName')->willReturn('vendor\library\TestStuff\InterfaceB');
         $interfaceB->method('getDocComment')->willReturn(false);
+        $interfaceB->method('getAttributes')->willReturn([]);
         $interfaceB->method('isInterface')->willReturn(true);
         $interfaceB->method('isTrait')->willReturn(false);
         $interfaceB->method('isAbstract')->willReturn(false);
@@ -294,6 +305,7 @@ class ClassFormatterTest extends TestCase
  */
 EOT
         );
+        $reflectionClass->method('getAttributes')->willReturn([]);
         $reflectionClass->method('isInterface')->willReturn(false);
         $reflectionClass->method('isTrait')->willReturn(false);
         $reflectionClass->method('isAbstract')->willReturn(false);
@@ -340,6 +352,7 @@ EOT
         $interfaceFromInterface->method('getShortName')->willReturn('SomeOtherInterface');
         $interfaceFromInterface->method('getName')->willReturn('vendor\library\TestStuff\SomeOtherInterface');
         $interfaceFromInterface->method('getDocComment')->willReturn(false);
+        $interfaceFromInterface->method('getAttributes')->willReturn([]);
         $interfaceFromInterface->method('isInterface')->willReturn(true);
         $interfaceFromInterface->method('isTrait')->willReturn(false);
         $interfaceFromInterface->method('isAbstract')->willReturn(false);
@@ -355,6 +368,7 @@ EOT
         $interfaceA->method('getShortName')->willReturn('InterfaceA');
         $interfaceA->method('getName')->willReturn('vendor\library\TestStuff\InterfaceA');
         $interfaceA->method('getDocComment')->willReturn(false);
+        $interfaceA->method('getAttributes')->willReturn([]);
         $interfaceA->method('isInterface')->willReturn(true);
         $interfaceA->method('isTrait')->willReturn(false);
         $interfaceA->method('isAbstract')->willReturn(false);
@@ -372,6 +386,7 @@ EOT
         $interfaceB->method('getShortName')->willReturn('InterfaceB');
         $interfaceB->method('getName')->willReturn('vendor\library\TestStuff\InterfaceB');
         $interfaceB->method('getDocComment')->willReturn(false);
+        $interfaceB->method('getAttributes')->willReturn([]);
         $interfaceB->method('isInterface')->willReturn(true);
         $interfaceB->method('isTrait')->willReturn(false);
         $interfaceB->method('isAbstract')->willReturn(false);
@@ -397,6 +412,7 @@ EOT
  */
 EOT
         );
+        $reflectionClass->method('getAttributes')->willReturn([]);
         $reflectionClass->method('isInterface')->willReturn(true);
         $reflectionClass->method('isTrait')->willReturn(false);
         $reflectionClass->method('isAbstract')->willReturn(false);
