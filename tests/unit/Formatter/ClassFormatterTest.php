@@ -6,6 +6,7 @@ namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use setasign\PhpStubGenerator\Formatter\ClassFormatter;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
@@ -13,7 +14,7 @@ class ClassFormatterTest extends TestCase
 {
     protected function createReflectionClassMock(): MockObject
     {
-        return $this->getMockBuilder(\ReflectionClass::class)
+        return $this->getMockBuilder(ReflectionClass::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'getShortName',
@@ -57,9 +58,8 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('isUserDefined')->willReturn(true);
 
         /**
-         * @var \ReflectionClass $reflectionClass
+         * @var ReflectionClass $reflectionClass
          */
-
         $formatter = new ClassFormatter($reflectionClass);
         $expectedResult = $t . 'class TestClass' . $n . $t . '{' . $n . $t . '}' . $n;
         $this->assertSame($expectedResult, $formatter->format(true));
@@ -89,7 +89,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('isUserDefined')->willReturn(true);
 
         /**
-         * @var \ReflectionClass $reflectionClass
+         * @var ReflectionClass $reflectionClass
          */
 
         $formatter = new ClassFormatter($reflectionClass);
@@ -121,7 +121,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('isUserDefined')->willReturn(true);
 
         /**
-         * @var \ReflectionClass $reflectionClass
+         * @var ReflectionClass $reflectionClass
          */
 
         $formatter = new ClassFormatter($reflectionClass);
@@ -153,7 +153,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('isUserDefined')->willReturn(true);
 
         /**
-         * @var \ReflectionClass $reflectionClass
+         * @var ReflectionClass $reflectionClass
          */
 
         $formatter = new ClassFormatter($reflectionClass);
@@ -185,7 +185,7 @@ class ClassFormatterTest extends TestCase
         $reflectionClass->method('isUserDefined')->willReturn(true);
 
         /**
-         * @var \ReflectionClass $reflectionClass
+         * @var ReflectionClass $reflectionClass
          */
 
         $formatter = new ClassFormatter($reflectionClass);
@@ -308,7 +308,7 @@ EOT
         $reflectionClass->method('isUserDefined')->willReturn(true);
 
         /**
-         * @var \ReflectionClass $reflectionClass
+         * @var ReflectionClass $reflectionClass
          */
 
         $formatter = new ClassFormatter($reflectionClass);
@@ -411,7 +411,7 @@ EOT
         $reflectionClass->method('isUserDefined')->willReturn(true);
 
         /**
-         * @var \ReflectionClass $reflectionClass
+         * @var ReflectionClass $reflectionClass
          */
 
         $formatter = new ClassFormatter($reflectionClass);

@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
-use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionType;
 use setasign\PhpStubGenerator\Formatter\MethodFormatter;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class MethodFormatterTest extends TestCase
 {
-    protected function createReflectionTypeMock(string $name, bool $allowsNull = false): \ReflectionType
+    protected function createReflectionTypeMock(string $name, bool $allowsNull = false): ReflectionNamedType
     {
-        $result = $this->getMockBuilder(\ReflectionType::class)
+        $result = $this->getMockBuilder(ReflectionNamedType::class)
             ->onlyMethods(['allowsNull', '__toString'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -21,20 +25,19 @@ class MethodFormatterTest extends TestCase
         $result->method('allowsNull')->willReturn($allowsNull);
         $result->method('__toString')->willReturn($name);
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
     }
 
     protected function createReflectionParameterMock(
         string $name,
-        ?\ReflectionType $type,
+        ?ReflectionType $type,
         bool $hasDefault,
         ?string $defaultConstant,
         $defaultValue,
         bool $isVariadic,
         bool $isPassedByReference
-    ): \ReflectionParameter {
-        $result = $this->getMockBuilder(\ReflectionParameter::class)
+    ): ReflectionParameter {
+        $result = $this->getMockBuilder(ReflectionParameter::class)
             ->onlyMethods([
                 'getName',
                 'getType',
@@ -53,7 +56,8 @@ class MethodFormatterTest extends TestCase
         $result->method('isDefaultValueAvailable')->willReturn($hasDefault);
         if ($hasDefault) {
             $result->method('isDefaultValueConstant')->willReturn($defaultConstant !== null);
-            $result->method('getDefaultValueConstantName')->willReturn($defaultConstant);
+            $result->method('getDefaultValueConstantName')
+                ->willReturn($defaultConstant !== null ? $defaultConstant : '');
             $result->method('getDefaultValue')->willReturn($defaultValue);
         } else {
             $result->method('isDefaultValueConstant')->willThrowException(
@@ -69,7 +73,6 @@ class MethodFormatterTest extends TestCase
         $result->method('isVariadic')->willReturn($isVariadic);
         $result->method('isPassedByReference')->willReturn($isPassedByReference);
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
     }
 
@@ -78,7 +81,7 @@ class MethodFormatterTest extends TestCase
         string $declaringClassName,
         int $modifiers,
         array $parameters,
-        ?\ReflectionType $returnType,
+        ?ReflectionType $returnType,
         ?string $doc
     ): ReflectionMethod {
         $result = $this->getMockBuilder(ReflectionMethod::class)
@@ -101,7 +104,7 @@ class MethodFormatterTest extends TestCase
 
         $result->method('getName')->willReturn($name);
 
-        $declaringClass = $this->getMockBuilder(\ReflectionClass::class)
+        $declaringClass = $this->getMockBuilder(ReflectionClass::class)
             ->onlyMethods(['getName'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -132,7 +135,6 @@ class MethodFormatterTest extends TestCase
         /** @noinspection ProperNullCoalescingOperatorUsageInspection */
         $result->method('getDocComment')->willReturn($doc ?? false);
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $result;
     }
 

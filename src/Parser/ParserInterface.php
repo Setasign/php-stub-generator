@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Parser;
 
+use ReflectionClass;
+
 interface ParserInterface
 {
     public const TYPE_CLASS = 'class';
@@ -15,22 +17,22 @@ interface ParserInterface
     public function parse(): void;
 
     /**
-     * @return array Returns an array like this: ['NamespaceName' => \ReflectionClass[]]
+     * @return array<string, ReflectionClass[]> Returns an array like this: ['NamespaceName' => ReflectionClass[]]
      * @throws \BadMethodCallException If parse wasn't called yet.
      */
     public function getClasses(): array;
 
-    /**
-     * @return array Returns an array like this: ['NamespaceName' => \ReflectionFunction[]]
-     * @throws \BadMethodCallException If parse wasn't called yet.
-     */
-    public function getFunctions(): array;
-
-    /**
-     * @return array Returns an array like this: ['NamespaceName' => ['ConstantName' => 'ConstantValue']]
-     * @throws \BadMethodCallException If parse wasn't called yet.
-     */
-    public function getConstants(): array;
+//    /**
+//     * @return array<string, ReflectionFunction[]>
+//     * @throws \BadMethodCallException If parse wasn't called yet.
+//     */
+//    public function getFunctions(): array;
+//
+//    /**
+//     * @return array<string, ReflectionConstant[]>
+//     * @throws \BadMethodCallException If parse wasn't called yet.
+//     */
+//    public function getConstants(): array;
 
     /**
      * Returns an array with all use aliases for $classOrFunctionName.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Tests\unit\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
 
@@ -12,7 +13,7 @@ class FormatHelperTest extends TestCase
     /**
      * @return array
      */
-    public function indentDocBlockDataProvider(): array
+    public static function indentDocBlockDataProvider(): array
     {
         $t1 = '    ';
         $t2 = "\t";
@@ -48,13 +49,12 @@ class FormatHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider indentDocBlockDataProvider
-     *
      * @param string $expectedOutput
      * @param string $block
      * @param int $tabCount
      * @param string $tabChar
      */
+    #[DataProvider('indentDocBlockDataProvider')]
     public function testIndentDocBlock(string $expectedOutput, string $block, int $tabCount, string $tabChar): void
     {
         $this->assertSame(
@@ -72,7 +72,7 @@ class FormatHelperTest extends TestCase
     /**
      * @return array
      */
-    public function formatValueDataProvider(): array
+    public static function formatValueDataProvider(): array
     {
         return [
             ['\'\'', ''],
@@ -91,11 +91,10 @@ class FormatHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider formatValueDataProvider
-     *
      * @param string $expectedOutput
      * @param string $value
      */
+    #[DataProvider('formatValueDataProvider')]
     public function testFormatValue(string $expectedOutput, $value): void
     {
         $this->assertSame(

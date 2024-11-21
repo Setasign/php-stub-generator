@@ -6,6 +6,8 @@ namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionProperty;
 use setasign\PhpStubGenerator\Formatter\PropertyFormatter;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
@@ -14,13 +16,13 @@ class PropertyFormatterTest extends TestCase
     protected function createReflectionPropertyMock(
         string $declaringClassName
     ): MockObject {
-        $declaringClass = $this->getMockBuilder(\ReflectionClass::class)
+        $declaringClass = $this->getMockBuilder(ReflectionClass::class)
             ->onlyMethods(['getName'])
             ->disableOriginalConstructor()
             ->getMock();
         $declaringClass->method('getName')->willReturn($declaringClassName);
 
-        $property = $this->getMockBuilder(\ReflectionProperty::class)
+        $property = $this->getMockBuilder(ReflectionProperty::class)
             ->onlyMethods([
                 'getName',
                 'isDefault',
@@ -58,7 +60,7 @@ class PropertyFormatterTest extends TestCase
         $property->method('isStatic')->willReturn(false);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'public $test = 123;' . $n . $n;
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
@@ -83,7 +85,7 @@ class PropertyFormatterTest extends TestCase
         $property->method('isStatic')->willReturn(false);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'protected $test = 123;' . $n . $n;
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
@@ -108,7 +110,7 @@ class PropertyFormatterTest extends TestCase
         $property->method('isStatic')->willReturn(false);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'private $test = 123;' . $n . $n;
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
@@ -133,7 +135,7 @@ class PropertyFormatterTest extends TestCase
         $property->method('isStatic')->willReturn(true);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'public static $test = 123;' . $n . $n;
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
@@ -155,7 +157,7 @@ class PropertyFormatterTest extends TestCase
         $property->method('isStatic')->willReturn(false);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = '';
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
@@ -180,7 +182,7 @@ class PropertyFormatterTest extends TestCase
         $property->method('isStatic')->willReturn(false);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = $t . $t . 'public $test;' . $n . $n;
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, null))->format());
@@ -202,7 +204,7 @@ class PropertyFormatterTest extends TestCase
         $property->method('isStatic')->willReturn(false);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = '';
         $this->assertSame($expectedOutput, (new PropertyFormatter('TestClass', $property, 123))->format());
@@ -236,7 +238,7 @@ EOT
         $property->method('isStatic')->willReturn(false);
 
         /**
-         * @var \ReflectionProperty $property
+         * @var ReflectionProperty $property
          */
         $expectedOutput = ''
             . $t . $t . '/**' . $n

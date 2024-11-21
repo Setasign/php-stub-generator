@@ -4,30 +4,62 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator\Formatter;
 
-use ReflectionFunctionAbstract;
+use ReflectionFunction;
+use ReflectionMethod;
 use ReflectionType;
+use ReflectionUnionType;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class FunctionFormatter
 {
-    public const DEFAULT_TYPES = ['int', 'float', 'bool', 'string', 'self', 'callable', 'array', 'object'];
+    public const DEFAULT_TYPES = [
+        'null', 'int', 'float', 'bool', 'string', 'self', 'callable', 'array', 'object', 'mixed'
+    ];
 
-    protected ReflectionFunctionAbstract $function;
+    protected ReflectionFunction|ReflectionMethod $function;
 
     /**
      * FunctionFormatter constructor.
      *
-     * @param ReflectionFunctionAbstract $function
+     * @param ReflectionFunction $function
      */
-    public function __construct(ReflectionFunctionAbstract $function)
+    public function __construct(ReflectionFunction $function)
     {
         $this->function = $function;
     }
 
+    protected function formatType(ReflectionType|null $type): string
+    {
+        if ($type instanceof ReflectionUnionType) {
+            $unionTypes = \array_map([$this, 'formatType'], $type->getTypes());
+            $unionTypesWithoutNull = \array_filter($unionTypes, function (string $type) {
+                return $type !== 'null';
+            });
+            if ($type->allowsNull() && count($unionTypesWithoutNull) === 1) {
+                $typeAllowsNull = true;
+                $type = \implode('|', $unionTypesWithoutNull);
+            } else {
+                $typeAllowsNull = false;
+                $type = \implode('|', $unionTypes);
+            }
+        } else {
+            $typeAllowsNull = $type->allowsNull();
+            $type = \ltrim((string) $type, '\\?');
+            if (!\in_array($type, self::DEFAULT_TYPES, true)) {
+                $type = '\\' . $type;
+            }
+        }
+
+        if ($type === 'null' || $type === 'mixed') {
+            return $type;
+        }
+
+        return ($typeAllowsNull ? '?' : '') . $type;
+    }
+
     /**
      * @return string
-     * @throws \ReflectionException
      */
     protected function formatParams(): string
     {
@@ -35,26 +67,8 @@ class FunctionFormatter
         foreach ($this->function->getParameters() as $parameter) {
             $param = '';
             $type = $parameter->getType();
-            $typeAllowsNull = false;
             if ($type instanceof ReflectionType) {
-                $typeAllowsNull = $type->allowsNull();
-                $type = (string) $type;
-            } else {
-                $type = '';
-            }
-
-            if ($type !== '') {
-                if ($typeAllowsNull) {
-                    $param .= '?';
-                }
-
-                if (\in_array($type, self::DEFAULT_TYPES, true)) {
-                    $param .= $type;
-                } else {
-                    $param .= '\\' . \ltrim($type, '\\');
-                }
-
-                $param .= ' ';
+                $param .= $this->formatType($type) . ' ';
             }
 
             if ($parameter->isPassedByReference()) {
@@ -72,7 +86,6 @@ class FunctionFormatter
                 } else {
                     $default = FormatHelper::formatValue($parameter->getDefaultValue());
                 }
-
                 $param .= ' = ' . $default;
             }
             $params[] = $param;
@@ -91,19 +104,7 @@ class FunctionFormatter
         $result = '';
 
         if ($this->function->hasReturnType()) {
-            $returnType = $this->function->getReturnType();
-
-            if ($returnType instanceof ReflectionType) {
-                $allowsNull = $returnType->allowsNull();
-                $returnType = (string) $returnType;
-
-                $result .= ': ' . ($allowsNull ? '?' : '');
-                if (\in_array($returnType, self::DEFAULT_TYPES, true)) {
-                    $result .= $returnType;
-                } else {
-                    $result .= '\\' . \ltrim($returnType, '\\');
-                }
-            }
+            $result .= ': ' . $this->formatType($this->function->getReturnType());
         }
 
         return $result;
@@ -111,7 +112,6 @@ class FunctionFormatter
 
     /**
      * @return string
-     * @throws \ReflectionException
      */
     public function format(): string
     {

@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace setasign\PhpStubGenerator;
 
-use ReflectionClass;
-use ReflectionFunction;
 use setasign\PhpStubGenerator\Formatter\ClassFormatter;
-use setasign\PhpStubGenerator\Formatter\FunctionFormatter;
-use setasign\PhpStubGenerator\Parser\GoaopParserReflection\GoaopParserReflectionParser;
+use setasign\PhpStubGenerator\Parser\BetterReflection\BetterReflectionParser;
 use setasign\PhpStubGenerator\Parser\ParserInterface;
 use setasign\PhpStubGenerator\Reader\ReaderInterface;
 
@@ -40,9 +37,23 @@ class PhpStubGenerator
     public static bool $addClassConstantsVisibility = false;
 
     /**
+     * If false the interface \Stringable won't be filtered out (the generated stubs require PHP >= 8.0).
+     *
+     * Within the cli tool can be set with the option "--includeStringable"
+     *
+     * @var bool
+     */
+    public static bool $includeStringable = false;
+
+    /**
      * @var ReaderInterface[]
      */
     private array $sources = [];
+
+    /**
+     * @var ReaderInterface[]
+     */
+    private array $resolvingSources = [];
 
     /**
      * @param string $name
@@ -62,16 +73,32 @@ class PhpStubGenerator
     }
 
     /**
+     * @param string $name
+     * @param ReaderInterface $reader
+     */
+    public function addResolvingSource(string $name, ReaderInterface $reader): void
+    {
+        $this->resolvingSources[$name] = $reader;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function removeResolvingSource(string $name): void
+    {
+        unset($this->resolvingSources[$name]);
+    }
+
+    /**
      * @return ParserInterface
      */
     public function getParser(): ParserInterface
     {
-        return new GoaopParserReflectionParser($this->sources);
+        return new BetterReflectionParser($this->sources, $this->resolvingSources);
     }
 
     /**
      * @return string
-     * @throws \ReflectionException
      */
     public function generate(): string
     {
@@ -82,9 +109,6 @@ class PhpStubGenerator
 
         $parser = $this->getParser();
         $parser->parse();
-        /**
-         * @var ReflectionClass[] $classes
-         */
         foreach ($parser->getClasses() as $namespace => $classes) {
             foreach ($classes as $class) {
                 $isGlobalNamespace = $namespace === '';
@@ -99,22 +123,19 @@ class PhpStubGenerator
             }
         }
 
-        /**
-         * @var ReflectionFunction[] $functions
-         */
-        foreach ($parser->getFunctions() as $namespace => $functions) {
-            foreach ($functions as $function) {
-                $isGlobalNamespace = ($namespace === '');
-                $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
-                    . '{' . $n;
-                $result .= $this->formatNamespaceAliases(
-                    $parser->getAliases($function->getName(), ParserInterface::TYPE_FUNCTION)
-                );
-                $result .= $n
-                    . (new FunctionFormatter($function))->format()
-                    . '}' . $n . $n;
-            }
-        }
+//        foreach ($parser->getFunctions() as $namespace => $functions) {
+//            foreach ($functions as $function) {
+//                $isGlobalNamespace = ($namespace === '');
+//                $result .= 'namespace' . (!$isGlobalNamespace ? ' ' . $namespace : '') . $n
+//                    . '{' . $n;
+//                $result .= $this->formatNamespaceAliases(
+//                    $parser->getAliases($function->getName(), ParserInterface::TYPE_FUNCTION)
+//                );
+//                $result .= $n
+//                    . (new FunctionFormatter($function))->format()
+//                    . '}' . $n . $n;
+//            }
+//        }
 
         return $result;
     }
@@ -133,7 +154,7 @@ class PhpStubGenerator
             $alias = (string) $alias;
 
             $result .= $t . 'use ' . $fullName;
-            if ($alias !== \substr($fullName, -\strlen($alias))) {
+            if (!str_ends_with($fullName, $alias)) {
                 $result .= ' as ' . $alias;
             }
             $result .= ';' . $n;

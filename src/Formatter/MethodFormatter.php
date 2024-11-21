@@ -5,15 +5,10 @@ declare(strict_types=1);
 namespace setasign\PhpStubGenerator\Formatter;
 
 use ReflectionMethod;
+use ReturnTypeWillChange;
 use setasign\PhpStubGenerator\Helper\FormatHelper;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
-/**
- * Class MethodFormatter
- *
- * @package setasign\PhpStubGenerator\Formatter
- * @property ReflectionMethod $function
- */
 class MethodFormatter extends FunctionFormatter
 {
     private string $className;
@@ -31,12 +26,11 @@ class MethodFormatter extends FunctionFormatter
     {
         $this->className = $className;
         $this->classIsInterface = $classIsInterface;
-        parent::__construct($method);
+        $this->function = $method;
     }
 
     /**
      * @return string
-     * @throws \ReflectionException
      */
     public function format(): string
     {
@@ -51,6 +45,16 @@ class MethodFormatter extends FunctionFormatter
         $doc = $this->function->getDocComment();
         if (\is_string($doc)) {
             $result .= FormatHelper::indentDocBlock($doc, 2, $t) . $n;
+        }
+
+        $attributes = $this->function->getAttributes();
+        foreach ($attributes as $attribute) {
+            $result .= $t . '#[' . $attribute->getName();
+            if ($attribute->getArguments() !== []) {
+                $arguments = \array_map([FormatHelper::class, 'formatValue'], $attribute->getArguments());
+                $result .= '(' . \implode(', ', $arguments) . ')';
+            }
+            $result .= ']' . $n;
         }
 
         $result .= $t . $t;

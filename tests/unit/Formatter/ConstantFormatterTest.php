@@ -6,14 +6,16 @@ namespace setasign\PhpStubGenerator\Tests\unit\Formatter;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use setasign\PhpStubGenerator\Formatter\ConstantFormatter;
+use ReflectionClass;
+use ReflectionClassConstant;
+use setasign\PhpStubGenerator\Formatter\ClassConstantFormatter;
 use setasign\PhpStubGenerator\PhpStubGenerator;
 
 class ConstantFormatterTest extends TestCase
 {
     protected function createReflectionConstMock(): MockObject
     {
-        return $this->getMockBuilder(\ReflectionClassConstant::class)
+        return $this->getMockBuilder(ReflectionClassConstant::class)
             ->onlyMethods([
                 'getDocComment',
                 'getName',
@@ -29,11 +31,11 @@ class ConstantFormatterTest extends TestCase
 
     protected function createReflectionClassMock(): MockObject
     {
-        return $this->getMockBuilder(\ReflectionClass::class)
+        return $this->getMockBuilder(ReflectionClass::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'getName',
-                'getReflectionConstant',
+                'getConstant',
             ])
             ->getMock();
     }
@@ -50,7 +52,7 @@ class ConstantFormatterTest extends TestCase
         $const = $this->createReflectionConstMock();
 
         $class->method('getName')->willReturn('TestClass');
-        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
         $const->method('getDocComment')->willReturn(false);
         $const->method('getName')->willReturn('SUPER_CONSTANT');
@@ -61,11 +63,11 @@ class ConstantFormatterTest extends TestCase
         $const->method('isPrivate')->willReturn(false);
 
         /**
-         * @var \ReflectionClass $class
-         * @var \ReflectionClassConstant $const
+         * @var ReflectionClass $class
+         * @var ReflectionClassConstant $const
          */
         $expectedOutput = $t . $t . 'const SUPER_CONSTANT = true;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+        $this->assertSame($expectedOutput, (new ClassConstantFormatter('TestClass', $const))->format());
     }
 
     /**
@@ -77,15 +79,15 @@ class ConstantFormatterTest extends TestCase
 
         $parentClass = $this->createReflectionClassMock();
         $parentClass->method('getName')->willReturn('ParentClass');
-        $parentClass->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+        $parentClass->method('getConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
         $const->method('getDeclaringClass')->willReturn($parentClass);
 
         /**
-         * @var \ReflectionClassConstant $const
+         * @var ReflectionClassConstant $const
          */
         $expectedOutput = '';
-        $this->assertSame($expectedOutput, (new ConstantFormatter('ImplementingClass', $const))->format());
+        $this->assertSame($expectedOutput, (new ClassConstantFormatter('ImplementingClass', $const))->format());
     }
 
     /**
@@ -100,7 +102,7 @@ class ConstantFormatterTest extends TestCase
         $const = $this->createReflectionConstMock();
 
         $class->method('getName')->willReturn('TestClass');
-        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
         $const->method('getDocComment')->willReturn(<<<EOT
 /**
@@ -120,7 +122,7 @@ EOT
         $const->method('isPrivate')->willReturn(false);
 
         /**
-         * @var \ReflectionClassConstant $const
+         * @var ReflectionClassConstant $const
          */
         $expectedOutput = $t . $t . '/**' . $n
             . $t . $t . ' * This is just a cool test case!' . $n
@@ -130,7 +132,7 @@ EOT
             . $t . $t . ' * @var bool' . $n
             . $t . $t . ' */' . $n
             . $t . $t . 'const SUPER_CONSTANT = true;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+        $this->assertSame($expectedOutput, (new ClassConstantFormatter('TestClass', $const))->format());
     }
 
     public function testPublicConstant(): void
@@ -147,7 +149,7 @@ EOT
         $const = $this->createReflectionConstMock();
 
         $class->method('getName')->willReturn('TestClass');
-        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
         $const->method('getDocComment')->willReturn(false);
         $const->method('getName')->willReturn('SUPER_CONSTANT');
@@ -158,10 +160,10 @@ EOT
         $const->method('isPrivate')->willReturn(false);
 
         /**
-         * @var \ReflectionClassConstant $const
+         * @var ReflectionClassConstant $const
          */
         $expectedOutput = $t . $t . 'public const SUPER_CONSTANT = true;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+        $this->assertSame($expectedOutput, (new ClassConstantFormatter('TestClass', $const))->format());
     }
 
     public function testProtectedConstant(): void
@@ -178,7 +180,7 @@ EOT
         $const = $this->createReflectionConstMock();
 
         $class->method('getName')->willReturn('TestClass');
-        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
         $const->method('getDocComment')->willReturn(false);
         $const->method('getName')->willReturn('SUPER_CONSTANT');
@@ -189,10 +191,10 @@ EOT
         $const->method('isPrivate')->willReturn(false);
 
         /**
-         * @var \ReflectionClassConstant $const
+         * @var ReflectionClassConstant $const
          */
         $expectedOutput = $t . $t . 'protected const SUPER_CONSTANT = true;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+        $this->assertSame($expectedOutput, (new ClassConstantFormatter('TestClass', $const))->format());
     }
 
     public function testPrivateConstant(): void
@@ -209,7 +211,7 @@ EOT
         $const = $this->createReflectionConstMock();
 
         $class->method('getName')->willReturn('TestClass');
-        $class->method('getReflectionConstant')->with('SUPER_CONSTANT')->willReturn($const);
+        $class->method('getConstant')->with('SUPER_CONSTANT')->willReturn($const);
 
         $const->method('getDocComment')->willReturn(false);
         $const->method('getName')->willReturn('SUPER_CONSTANT');
@@ -220,9 +222,9 @@ EOT
         $const->method('isPrivate')->willReturn(true);
 
         /**
-         * @var \ReflectionClassConstant $const
+         * @var ReflectionClassConstant $const
          */
         $expectedOutput = $t . $t . 'private const SUPER_CONSTANT = true;' . $n . $n;
-        $this->assertSame($expectedOutput, (new ConstantFormatter('TestClass', $const))->format());
+        $this->assertSame($expectedOutput, (new ClassConstantFormatter('TestClass', $const))->format());
     }
 }

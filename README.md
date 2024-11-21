@@ -5,7 +5,7 @@ The main purpose for this tool is to generate stub-files from php classes to hav
 completion for your IDE when encrypting your library with e.g. 
 [the ioncube encoder](http://www.ioncube.com/php_encoder.php).
 
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%207.3-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%208.2-8892BF.svg)](https://php.net/)
 [![License](https://img.shields.io/packagist/l/setasign/php-stub-generator.svg)](https://packagist.org/packages/setasign/php-stub-generator)
 
 ## Installation
@@ -75,12 +75,19 @@ class PhpStubGenerator
      * @var bool
      */
     public static $addClassConstantsVisibility = false;
+    
+    /**
+     * If false the interface \Stringable won't be filtered out (the generated stubs require PHP >= 8.0).
+     *
+     * Within the cli tool can be set with the option "--includeStringable"
+     *
+     * @var bool
+     */
+    public static bool $includeStringable = false;
 }
 ```
 
-## Drawbacks / TODOs
-- Traits are not supported yet and probably won't be because of bugs like [this](https://bugs.php.net/bug.php?id=69180).
-  The actual reflection api doesn't give enough information to rebuild the conflict resolution block.
-  Additionally the "declaring class" of imported trait methods is the importing class and not like expected the trait.
+## Drawbacks
 - Calculated constants or constants that use other constants like \_\_DIR\_\_ will be filled with the values of the 
   runtime environment.
+- Global Functions and Constants are currently ignored

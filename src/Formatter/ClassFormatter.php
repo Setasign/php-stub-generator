@@ -25,7 +25,6 @@ class ClassFormatter
     /**
      * @param bool $ignoreSubElements
      * @return string
-     * @throws \ReflectionException
      */
     public function format(bool $ignoreSubElements = false): string
     {
@@ -34,11 +33,21 @@ class ClassFormatter
 
         $result = '';
         $docComment = $this->class->getDocComment();
-        if ($docComment !== false) {
+        if (\is_string($docComment)) {
             $result .= FormatHelper::indentDocBlock($docComment, 1, $t) . $n;
         }
-        $result .= $t;
 
+        $attributes = $this->class->getAttributes();
+        foreach ($attributes as $attribute) {
+            $result .= $t . '#[' . $attribute->getName();
+            if ($attribute->getArguments() !== []) {
+                $arguments = \array_map([FormatHelper::class, 'formatValue'], $attribute->getArguments());
+                $result .= '(' . \implode(', ', $arguments) . ')';
+            }
+            $result .= ']' . $n;
+        }
+
+        $result .= $t;
         if ($this->class->isInterface()) {
             $result .= 'interface ';
         } elseif ($this->class->isTrait()) {
@@ -56,21 +65,22 @@ class ClassFormatter
         $parentClass = null;
         try {
             $parentClass = $this->class->getParentClass();
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
         }
         if ($parentClass instanceof ReflectionClass) {
             $result .= ' extends \\' . \ltrim($parentClass->getName(), '\\');
         }
 
         $interfaces = $this->class->getInterfaces();
-        // remove interfaces from parent class if there is a parent class
-        if ($parentClass instanceof ReflectionClass) {
-            $interfaces = \array_filter($interfaces, function (ReflectionClass $interface) use ($parentClass) {
-                // if the $parentClass is a default php class it cannot use an user defined interface
-                if (!$parentClass->isUserDefined() && $interface->isUserDefined()) {
-                    return false;
-                }
+        if (!PhpStubGenerator::$includeStringable) {
+            $interfaces = \array_filter($interfaces, function ($interface) {
+                return $interface->getName() !== 'Stringable';
+            });
+        }
 
+        if ($parentClass instanceof ReflectionClass) {
+            // remove interfaces from parent class if there is a parent class
+            $interfaces = \array_filter($interfaces, function (ReflectionClass $interface) use ($parentClass) {
                 return !$parentClass->implementsInterface($interface->getName());
             });
         }
@@ -82,11 +92,7 @@ class ClassFormatter
                 /**
                  * @var ReflectionClass $compareInterface
                  */
-                // if the $compareInterface is a default php interface it cannot use an user defined interface
-                if (
-                    (!$compareInterface->isUserDefined() && $interface->isUserDefined())
-                    || $compareInterface->implementsInterface($interfaceName)
-                ) {
+                if ($compareInterface->implementsInterface($interfaceName)) {
                     return false;
                 }
             }
@@ -116,7 +122,7 @@ class ClassFormatter
 
         if (!$ignoreSubElements) {
             foreach ($this->class->getReflectionConstants() as $constant) {
-                $result .= (new ConstantFormatter($this->class->getName(), $constant))->format();
+                $result .= (new ClassConstantFormatter($this->class->getName(), $constant))->format();
             }
 
             foreach ($this->class->getProperties() as $property) {
