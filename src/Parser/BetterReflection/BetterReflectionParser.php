@@ -25,6 +25,8 @@ class BetterReflectionParser implements ParserInterface
      */
     private ?array $aliases = null;
 
+    private ?array $classAliases = null;
+
     /**
      * @param ReaderInterface[] $sources
      * @param ReaderInterface[] $resolvingSources These sources are used to resolve reflections but won't generate stubs
@@ -58,6 +60,9 @@ class BetterReflectionParser implements ParserInterface
             );
         }
 
+        $classAliases = [];
+        $secondarySourceLocators[] = new AliasSourceLocator($mainSourceLocator, $classAliases);
+
         // php internals
         $secondarySourceLocators[] = new MemoizingSourceLocator(
             new PhpInternalSourceLocator($astLocator, new ReflectionSourceStubber())
@@ -74,10 +79,19 @@ class BetterReflectionParser implements ParserInterface
         $aliases = [];
 
         $classIdent = new IdentifierType(IdentifierType::IDENTIFIER_CLASS);
+
         foreach ($reflector->reflectAllClasses() as $class) {
             $className = $class->getName();
-            $classes[$class->getNamespaceName()][$className] = new ReflectionClass($class);
 
+            $docComment = $class->getDocComment() ?? '';
+            $classAliasPos = \strpos($docComment, '@alias');
+            if ($classAliasPos !== false) {
+                $lineEnding = \strpos($docComment, "\n", $classAliasPos);
+                $alias = \ltrim(\substr($docComment, $classAliasPos + 7, $lineEnding - $classAliasPos - 7), '\\');
+                $classAliases[$alias] = \ltrim($className, '\\');
+            }
+
+            $classes[$class->getNamespaceName()][$className] = new ReflectionClass($class);
             $aliases[self::TYPE_CLASS][$className] = $astLocator->getNamespaceUses($classIdent, $className);
         }
 
@@ -97,6 +111,7 @@ class BetterReflectionParser implements ParserInterface
 //        $this->functions = $functions;
 //        $this->constants = $constants;
         $this->aliases = $aliases;
+        $this->classAliases = $classAliases;
     }
 
     /**
@@ -152,5 +167,17 @@ class BetterReflectionParser implements ParserInterface
         }
 
         return $this->aliases[$type][$classOrFunctionName];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getClassAliases(): array
+    {
+        if ($this->classAliases === null) {
+            throw new \BadMethodCallException('BetterReflectionParser::parse wasn\'t called yet!');
+        }
+
+        return $this->classAliases;
     }
 }

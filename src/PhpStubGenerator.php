@@ -123,6 +123,16 @@ class PhpStubGenerator
             }
         }
 
+        $classAliases = $parser->getClassAliases();
+        if ($classAliases !== []) {
+            $result .= 'namespace' . $n
+                . '{' . $n;
+            foreach ($classAliases as $oldName => $newName) {
+                $result .= '    class_alias(\'' . $oldName . '\', \'' . $newName . '\');' . $n;
+            }
+            $result .= '}' . $n . $n;
+        }
+
 //        foreach ($parser->getFunctions() as $namespace => $functions) {
 //            foreach ($functions as $function) {
 //                $isGlobalNamespace = ($namespace === '');
