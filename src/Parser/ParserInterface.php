@@ -44,4 +44,9 @@ interface ParserInterface
      * @throws \InvalidArgumentException If the class or function is unknown.
      */
     public function getAliases(string $classOrFunctionName, string $type): array;
+
+    /**
+     * @return array<string, string> Returns a list of all class aliases in this structure: ['old-name' => 'new-name']
+     */
+    public function getClassAliases(): array;
 }
